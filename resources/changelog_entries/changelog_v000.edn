@@ -1,0 +1,12 @@
+{:date {:year 2024
+        :month "June"
+        :day 6}
+ :responsible {:name "Brad Losavio"
+               :email "blosavio@sagevisuals.com"}
+ :version 0
+ :comment "Initial public release."
+ :project-status :experimental
+ :stable false
+ :urgency :low
+ :breaking? false
+ :changes []}

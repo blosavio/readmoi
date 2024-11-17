@@ -1,0 +1,18 @@
+{:date {:year 
+        :month ""
+        :day }
+ :responsible {:name "Brad Losavio"
+               :email "blosavio@sagevisuals.com"}
+ :version 
+ :comment "."
+ :project-status :
+ :stable 
+ :urgency :
+ :breaking? 
+ :changes
+ [{:description "."
+   :date {:year 
+          :month ""
+          :day }
+   :change-type :
+   :breaking? }]}
