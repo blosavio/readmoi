@@ -24,7 +24,7 @@
   [:p "Here's how to use " [:code "inc"] "."]
   [:pre [:code "(inc 99) ;; => 100"]]]
 
- [:p "ReadMoi consulted the options file, learned that there was a section called 'super', loaded the contents of a " [:code "super.clj"] " file, processed the hiccup/html contents of the file — which involved evaluating the code examples — and wrote the ReadMe files."]
+ [:p "ReadMoi consulted the options file, learned that there was a section called 'super', loaded the contents of the " [:code "super.clj"] " file, processed the hiccup/html contents of the file — which involved evaluating " [:code "(inc 99)"] " and then inserting " [:code " ;; => 100"] " — and wrote the ReadMe files."]
 
  [:h3 "ReadMoi examples from other projects"]
 

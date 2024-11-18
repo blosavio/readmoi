@@ -45,8 +45,11 @@
 
 ;; FireFox apparently won't follow symlinks to css or font files
 
+
 (def ^{:no-doc true} *wrap-at*-docstring
-  "Base-case column wrap, override-able by supplying extra args to the function that would otherwise consult this value. Default `40`.")
+  "Base-case column wrap, override-able by supplying extra args to the function
+ that would otherwise consult this value, e.g., [[print-form-then-eval]].
+ Default `40`.")
 
 
 (def ^{:no-doc true} *separator*-docstring
@@ -59,6 +62,23 @@
  governing  formatting specific function invocations. Default `{}`.")
 
 
+(def ^{:no-doc true} *project-group*-docstring
+  "Project group as observed in Leiningen `project.clj`. Defaults to `\"\"`
+ (i.e., empty string). Intended to be referenced within hiccup/html section
+ files.")
+
+
+(def ^{:no-doc true} *project-name*-docstring
+  "Project name as observed in Leiningen `project.clj`. Defaults to `\"\"`
+ (i.e., empty string). Intended to be referenced within hiccup/html section
+ files.")
+
+
+(def ^{:no-doc true} *project-version*-docstring
+  "Project version as observed in Leiningen `project.clj`. Defaults to `nil`.
+Intended to be referenced within hiccup/html section files.")
+
+
 (def ^{:dynamic true
        :doc *wrap-at*-docstring} *wrap-at* 40)
 
@@ -67,6 +87,15 @@
 
 (def ^{:dynamic true
        :doc *fn-map-additions*-docstring} *fn-map-additions* {})
+
+(def ^{:dynamic true
+       :doc *project-group*-docstring} *project-group* "")
+
+(def ^{:dynamic true
+       :doc *project-name*-docstring} *project-name* "")
+
+(def ^{:dynamic true
+       :doc *project-version*-docstring} *project-version* nil)
 
 
 (defn comment-newlines
@@ -151,10 +180,6 @@
   [s]
   (-> s read-string eval pr-str))
 
-
-(comment
-
-  )
 
 (defn prettyfy
   "Apply `zprint` formatting to string `s`. Optional integer `width` over-rides
@@ -330,7 +355,7 @@
 
 (defn section-blocks
   "Create hiccup html section blocks given a vector of `sections`, in 
-  `directory` (defaults to 'resources/readme_sections'."
+  `directory` (defaults to 'resources/readme_sections')."
   {:UUIDv4 #uuid "15893381-f284-4b5e-9680-c8095161c3d9"
    :no-doc true}
   ([sections] (section-blocks sections "resources/readme_sections/"))
@@ -363,7 +388,7 @@
    (conj body [:p#page-footer
                (copyright person)
                [:br]
-               (str "Compiled " (short-date) ".")
+               "Compiled by " [:a {:href "https://github.com/blosavio/readmoi"} "ReadMoi"]  " on " (short-date) "."
                [:span#uuid [:br] uuid]])))
 
 
@@ -577,16 +602,16 @@
         desired-*fn-map-additions* (or (opt :fn-map-additions) *fn-map-additions*)]
     (binding [*wrap-at* desired-*wrap-at*
               *separator* desired-*separator*
-              *fn-map-additions* desired-*fn-map-additions*]
-      (let [project-version (nth project-metadata 2)
-            project-description (nth project-metadata 4)
-            project-group (get-project-group-or-name project-metadata :group)
-            project-name (get-project-group-or-name project-metadata :name)
-            title-section (generate-title-section (or (opt :project-name-formatted) project-name)
+              *fn-map-additions* desired-*fn-map-additions*
+              *project-version* (nth project-metadata 2)
+              *project-group* (get-project-group-or-name project-metadata :group)
+              *project-name* (get-project-group-or-name project-metadata :name)]
+      (let [project-description (nth project-metadata 4)
+            title-section (generate-title-section (or (opt :project-name-formatted) *project-name*)
                                                   (or (opt :project-description) project-description))
             license-section (generate-license-section (opt :license-hiccup))
             clojars-badge (if (opt :clojars-badge?)
-                            (generate-clojars-badge project-group project-name))
+                            (generate-clojars-badge *project-group* *project-name*))
             readmoi-page-body (generate-page-body clojars-badge
                                                   (opt :sections)
                                                   (opt :sections-directory)
