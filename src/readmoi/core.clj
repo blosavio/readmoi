@@ -49,7 +49,7 @@
 (def ^{:no-doc true} *wrap-at*-docstring
   "Base-case column wrap, override-able by supplying extra args to the function
  that would otherwise consult this value, e.g., [[print-form-then-eval]].
- Default `40`.")
+ Default `80`.")
 
 
 (def ^{:no-doc true} *separator*-docstring
@@ -80,7 +80,7 @@ Intended to be referenced within hiccup/html section files.")
 
 
 (def ^{:dynamic true
-       :doc *wrap-at*-docstring} *wrap-at* 40)
+       :doc *wrap-at*-docstring} *wrap-at* 80)
 
 (def ^{:dynamic true
        :doc *separator*-docstring} *separator* " => ")
@@ -214,9 +214,10 @@ Intended to be referenced within hiccup/html section files.")
 
   The two optional width args supersede `*wrap-at*`.
 
-  * `width-fn` governs the max-width of the rendered `str-form`. Default `40`.
+  * `width-fn` governs the max-width of the rendered `str-form`. Default
+  `*wrap-at*`.
   * `width-output` governs the max-width of the rendered _evaluation_ of
-  `str-form`. Default `40`.
+  `str-form`. Default `(/ *wrap-at* 2)`.
 
   Re-bind [[*wrap-at*]] to change base-case column-wrap width. The two optional
   width args, `width-fn` and `width-output`, supersede this value.
@@ -285,7 +286,7 @@ Intended to be referenced within hiccup/html section files.")
       (inc 1) ;; --->> 2
       ```"
   {:UUIDv4 #uuid "39dcd66b-f919-41a2-8376-4c2364bf3c59"}
-  ([str-form] (print-form-then-eval str-form *wrap-at* *wrap-at*))
+  ([str-form] (print-form-then-eval str-form *wrap-at* (/ *wrap-at* 2)))
   ([str-form width-fn width-output]
    (let [def? (re-find #"^\((s\/)?defn?(macro)?(pred)? " str-form)
          require? (re-find #"^\(require " str-form)

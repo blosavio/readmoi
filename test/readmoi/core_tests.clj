@@ -154,7 +154,7 @@
     [:code "(defn test-defn [x] (* 3 x))"]
 
     (print-form-then-eval "(defmacro Violets-awesome-macro [x] `(+ ~x))")
-    [:code "(defmacro Violets-awesome-macro\n  [x]\n  `(+ ~x))"]
+    [:code "(defmacro Violets-awesome-macro [x] `(+ ~x))"]
 
     ;; See issue with macroexpansion and lein test running: https://github.com/technomancy/leiningen/issues/912
     #_ (require '[speculoos.utility :refer [defpred]])

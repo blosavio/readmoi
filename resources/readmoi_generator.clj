@@ -5,7 +5,13 @@
   {:no-doc true}
   (:require
    [hiccup2.core :refer [raw]]
-   [readmoi.core :refer :all]))
+   [readmoi.core :refer [*project-group*
+                         *project-name*
+                         *project-version*
+                         *wrap-at*
+                         generate-all
+                         prettyfy
+                         print-form-then-eval]]))
 
 
 (def project-metadata (read-string (slurp "project.clj")))
