@@ -1,6 +1,6 @@
 {:sections [{:section-name "Setup"}
             {:section-name "API" :section-href "https://blosavio.github.io/readmoi/index.html" :skip-section-load? true}
-            {:section-name "Changelog" :section-href "https://blosavio.github.io/readmoi/changelog.md" :skip-section-load? true}
+            {:section-name "Changelog" :section-href "https://github.com/blosavio/readmoi/blob/main/changelog.md" :skip-section-load? true}
             {:section-name "Introduction" :section-href "intro"}
             {:section-name "Usage" :section-href "usage"}
             {:section-name "Examples" :section-href "examples"}
