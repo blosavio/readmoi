@@ -128,8 +128,14 @@
 (spit "changelog.md"
       (h2/html
        (vec (-> [:body
-                 [:h1 "Readmoi library changelog"]
+                 [:h1 "ReadMoi library changelog"]
                  [:a {:href "#info"} "changelog meta"]]
                 (into (map #(generate-version-section %) (reverse changelog-data)))
                 (conj changelog-info)
                 (conj changelog-md-footer)))))
+
+
+(defn -main
+  [& args]
+  {:UUIDv4 #uuid "669e47aa-f677-4376-9ebe-b89849e35161"}
+  (println "generated ReadMoi changelog"))

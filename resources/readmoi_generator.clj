@@ -19,3 +19,9 @@
 
 
 (generate-all project-metadata readmoi-options)
+
+
+(defn -main
+  [& args]
+  {:UUIDv4 #uuid "60f00c64-6480-42df-9181-3048da80db73"}
+  (println "generated ReadMoi ReadMe docs"))
