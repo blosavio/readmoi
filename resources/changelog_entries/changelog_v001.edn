@@ -1,0 +1,27 @@
+{:date {:year 2024
+        :month "November"
+        :day 22}
+ :responsible {:name "Brad Losavio"
+               :email "blosavio@sagevisuals.com"}
+ :version 1
+ :comment "Normalized html and markdown outputs. Generalized page-footer, added
+ copyright statement to markdown output file to better match the html verison."
+ :project-status :active
+ :stable false
+ :urgency :medium
+ :breaking? true
+ :changes
+ [{:description "Generalized page footer generation."
+   :date {:year 2024
+          :month "November"
+          :day 22}
+   :change-type :relaxed-requirements
+   :altered-functions ['page-footer 'page-template]
+   :breaking? false}
+  {:description "Added copyright and UUID page footers to markdown output file."
+   :date {:year 2024
+          :month "November"
+          :day 22}
+   :change-type :altered-functions
+   :altered-functions ['generate-readmoi-markdown]
+   :breaking? true}]}

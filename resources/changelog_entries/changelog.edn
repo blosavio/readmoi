@@ -1,1 +1,2 @@
-[(load-file "resources/changelog_entries/changelog_v000.edn")]
+[(load-file "resources/changelog_entries/changelog_v000.edn")
+ (load-file "resources/changelog_entries/changelog_v001.edn")]

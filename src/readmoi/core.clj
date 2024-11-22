@@ -371,12 +371,32 @@ Intended to be referenced within hiccup/html section files.")
      (map section-fn sections))))
 
 
+(defn page-footer
+  "Given a copyright-holder `person` string, a `uuid`, and optional
+  `compiled-by`, returns hiccup/html for for a page footer.
+
+  `compiled-by` is a hiccup/html hyperlink form that announces the entity that
+  created the document, such as the default:
+  ```clojure
+  [:a {:href \"https://github.com/blosavio/readmoi\"} \"ReadMoi\"]
+  ```"
+  {:UUIDv4 #uuid "bdcb4fb2-f512-485f-89bd-9182184e3090"
+   :no-doc true}
+  ([person uuid] (page-footer person uuid [:a {:href "https://github.com/blosavio/readmoi"} "ReadMoi"]))
+  ([person uuid compiled-by]
+   [:p#page-footer
+    (copyright person)
+    [:br]
+    "Compiled by " compiled-by " on " (short-date) "."
+    [:span#uuid [:br] uuid]]))
+
+
 (defn page-template
-  "Generate a webpage with header title t, hiccup/html dialect body b, and
-  UUIDv4 uuid."
+  "Generate a webpage with header title `t`, hiccup/html dialect body `b`, and
+  UUIDv4 `uuid`."
   {:UUIDv4 #uuid "80dd93eb-0c26-41a0-9e6c-2d88352ea4e5"
    :no-doc true}
-  [title uuid body person]
+  [title uuid body person & [compiler]]
   (page/html5
    {:lang "en"}
    [:head
@@ -386,11 +406,9 @@ Intended to be referenced within hiccup/html section files.")
             "name" "viewport"
             "content" "width=device-width, initial-scale=1"
             "compile-date" (long-date)}]]
-   (conj body [:p#page-footer
-               (copyright person)
-               [:br]
-               "Compiled by " [:a {:href "https://github.com/blosavio/readmoi"} "ReadMoi"]  " on " (short-date) "."
-               [:span#uuid [:br] uuid]])))
+   (conj body (if compiler
+                (page-footer person uuid compiler)
+                (page-footer person uuid)))))
 
 
 (defn random-sentence
@@ -524,14 +542,14 @@ Intended to be referenced within hiccup/html section files.")
    :no-doc true}
   [opts page-body & [project-name project-description]]
   (spit (or (str (opts :readme-html-directory) (opts :readme-html-filename)) "doc/readme.html")
-      (revert-fn-obj-rendering (page-template
-                                (str
-                                 (or (opts :project-name-formatted) project-name)
-                                 " — "
-                                 (or (opts :project-description) project-description))
-                                (opts :readme-UUID)
-                                (conj [:body] page-body)
-                                (opts :copyright-holder)))))
+        (revert-fn-obj-rendering (page-template
+                                  (str
+                                   (or (opts :project-name-formatted) project-name)
+                                   " — "
+                                   (or (opts :project-description) project-description))
+                                  (opts :readme-UUID)
+                                  (conj [:body] page-body)
+                                  (opts :copyright-holder)))))
 
 
 (defn generate-readmoi-markdown
@@ -542,13 +560,14 @@ Intended to be referenced within hiccup/html section files.")
    :no-doc true}
   [opts page-body]
   (spit (or (str (opts :readme-markdown-directory) (opts :readme-markdown-filename)) "README.md")
-      (-> page-body
-          h2/html
-          str
-          (clojure.string/replace #"</?article>" "")
-          non-breaking-space-ize
-          revert-fn-obj-rendering
-          #_escape-markdowners)))
+        (-> page-body
+            (concat [(page-footer (opts :copyright-holder) (opts :readme-UUID))])
+            h2/html
+            str
+            (clojure.string/replace #"</?article>" "")
+            non-breaking-space-ize
+            revert-fn-obj-rendering
+            #_escape-markdowners)))
 
 
 (defn generate-title-section
@@ -570,10 +589,10 @@ Intended to be referenced within hiccup/html section files.")
   (let [default-license [:p "This program and the accompanying materials are made available under the terms of the "
                          [:a {:href "https://opensource.org/license/MIT"} "MIT License"]
                          "."]]
-  [[:h2 "License"]
-   (if (first license-contents)
-     (into [:p] license-contents)
-     default-license)]))
+    [[:h2 "License"]
+     (if (first license-contents)
+       (into [:p] license-contents)
+       default-license)]))
 
 
 (defn generate-all

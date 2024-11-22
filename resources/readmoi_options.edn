@@ -11,11 +11,7 @@
  :copyright-holder "Brad Losavio"
 
  ;; special directives to zprint on how to handle these functions
- :fn-map-additions {"all-paths" :arg1
-                    "validate-scalars" :hang
-                    "valid-scalars?" :hang
-                    "validate-collections" :hang
-                    "valid-collections?" :hang}
+ :fn-map-additions {}
 
  :project-description "A Clojure library for generating a project ReadMe from hiccup/html"
  :project-name-formatted "ReadMoi"

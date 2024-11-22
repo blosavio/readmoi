@@ -255,6 +255,20 @@
 (def test-html-regex #"<!DOCTYPE html>\n<html lang=\"en\"><head><link href=\"project.css\" rel=\"stylesheet\" type=\"text/css\"><title>Page Template Test Title</title><meta charset=\"utf-8\" compile-date=\"\d{4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}\" content=\"width=device-width, initial-scale=1\" name=\"viewport\"></head><body>Page template test body text.<p id=\"page-footer\">Copyright © \d{4} Foo Bar.<br>Compiled by <a href=\"https://github.com/blosavio/readmoi\">ReadMoi</a> on \d{4} \w{3,9} \d{1,2}.<span id=\"uuid\"><br>sham UUID</span></p></body></html>")
 
 
+(deftest page-footer-tests
+  (are [x y] (= x y)
+    (page-footer "me" "UUID")
+    [:p#page-footer
+     "Copyright © 2024 me." [:br]
+     "Compiled by " [:a {:href "https://github.com/blosavio/readmoi"} "ReadMoi"] " on " "2024 November 22" "."
+     [:span#uuid [:br] "UUID"]]
+
+    (page-footer "me" "UUID" [:a {:href "example.com"} "lib"])
+    [:p#page-footer "Copyright © 2024 me." [:br]
+     "Compiled by " [:a {:href "example.com"} "lib"] " on " "2024 November 22" "."
+     [:span#uuid [:br] "UUID"]]))
+
+
 (deftest page-template-test
   (are [x] ((complement nil?) x)
     (re-find test-html-regex (page-template "Page Template Test Title" "sham UUID" [:body "Page template test body text."] "Foo Bar"))))
