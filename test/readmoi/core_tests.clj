@@ -258,15 +258,22 @@
 (deftest page-footer-tests
   (are [x y] (= x y)
     (page-footer "me" "UUID")
-    [:p#page-footer
-     "Copyright © 2024 me." [:br]
-     "Compiled by " [:a {:href "https://github.com/blosavio/readmoi"} "ReadMoi"] " on " "2024 November 22" "."
-     [:span#uuid [:br] "UUID"]]
+    (assoc
+     [:p#page-footer
+      "Copyright © 2024 me." [:br]
+      "Compiled by " [:a {:href "https://github.com/blosavio/readmoi"} "ReadMoi"] " on " "<assoc updated date>" "."
+      [:span#uuid [:br] "UUID"]]
+     6
+     (readmoi.core/short-date))
 
     (page-footer "me" "UUID" [:a {:href "example.com"} "lib"])
-    [:p#page-footer "Copyright © 2024 me." [:br]
-     "Compiled by " [:a {:href "example.com"} "lib"] " on " "2024 November 22" "."
-     [:span#uuid [:br] "UUID"]]))
+    (assoc
+     [:p#page-footer
+      "Copyright © 2024 me." [:br]
+      "Compiled by " [:a {:href "example.com"} "lib"] " on " "<assoc updated date>" "."
+      [:span#uuid [:br] "UUID"]]
+     6
+     (readmoi.core/short-date))))
 
 
 (deftest page-template-test
