@@ -21,6 +21,6 @@
           :doc-files []
           :source-uri "https://github.com/blosavio/readmoi/blob/main/{filepath}#L{line}"
           :html {:namespace-list :flat
-                 :transforms [[:div.sidebar.primary] [:append [:ul.index-link [:li.depth-1 [:a {:href "http://example.com"} "Example link"]]]]]}
+                 :transforms [[:div.sidebar.primary] [:append [:ul.index-link [:li.depth-1 [:a {:href "https://github.com/blosavio/readmoi"} "Project home"]]]]]}
           :project {:name "ReadMoi" :version "version 2-SNAPSHOT1"}}
   :scm {:name "git" :url "https://github.com/blosavio/readmoi"})
