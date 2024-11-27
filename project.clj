@@ -20,6 +20,7 @@
           :output-path "doc"
           :doc-files []
           :source-uri "https://github.com/blosavio/readmoi/blob/main/{filepath}#L{line}"
-          :themes [:readmoi]
+          :html {:namespace-list :flat
+                 :transforms [[:div.sidebar.primary] [:append [:ul.index-link [:li.depth-1 [:a {:href "http://example.com"} "Example link"]]]]]}
           :project {:name "ReadMoi" :version "version 2-SNAPSHOT1"}}
   :scm {:name "git" :url "https://github.com/blosavio/readmoi"})
