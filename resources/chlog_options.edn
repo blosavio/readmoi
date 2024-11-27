@@ -1,0 +1,13 @@
+{:project-formatted-name "ReadMoi"
+ :copyright-holder "Brad Losavio"
+
+ :changelog-UUID #uuid "aa13a964-fbe5-4347-92f5-90ba0da27bdb"
+
+ :changelog-html-directory "doc/"
+ :changelog-html-filename "changelog.html"
+
+ :changelog-markdown-directory ""
+ :changelog-markdown-filename "changelog.md"
+
+ :changelog-entries-directory "resources/changelog_entries/"
+ :changelog-data-file "changelog.edn"}

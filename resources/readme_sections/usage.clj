@@ -29,7 +29,7 @@
 
    [:p "Don't bother inserting the return value. Every time we generate the document, the code is re-evaluated. We can re-write our code examples and quickly see how they'll appear in the document. Also, the code examples stay synchronized as the codebase changes."]
 
-   [:p "Note: Any definitions (" [:code "def"] ", " [:code "defn"] ", etc.) bind a value to a symbol in that namespace, which is useful and typically what we'd want, but can on occasion, be inconvenient."]
+   [:p "Note: Any definitions (" [:code "def"] ", " [:code "defn"] ", etc.) will bind a value to a symbol in that namespace, which is useful and typically what we'd want, but can on occasion, be inconvenient."]
 
    [:p "The pretty-printing is delegated to " [:code "zprint"] ", which has a million and one options. " [:code "print-form-then-eval"] " provides about four knobs to tweak the line-breaking, which is good enough for most examples in a ReadMe document. See the " [:a {:href "https://blosavio.github.io/readmoi/index.html"} [:span.small-caps "api"] " documentation"] " for details."]]
 
@@ -92,4 +92,4 @@
 
   [:p "If a navigation link doesn't work as expected, check that the " [:span.small-caps "html"] " section element id in the section's " [:code ".clj"] " file matches the " [:code ":section-href"] " in the " [:em "options map"] " in " [:code "readmoi_options.edn"] "."]
 
- [:p "If " [:code "print-form-then-eval"] " doesn't behave as you'd like, try adjusting the " [:code "width-fn"] " and " [:code "width-output"] " parameters first. Then if that doesn't suit, try supplying a function-specific formatting directive in the " [:code ":fn-map-additions"] " value of the " [:em "options map"] " in " [:code "readmoi_options.edn"] ". The " [:code "zprint"] " pretty-printer has an astronomical amount of settings, but in the end, it just tries to do what its author thinks looks best. Almost all the time it works great. My advice: don't chase perfection, just get it looking pretty good and spend the extra time on editing your prose."]]
+ [:p "If " [:a {:href "https://blosavio.github.io/readmoi/readmoi.core.html#var-print-form-then-eval"} [:code "print-form-then-eval"]] " doesn't behave as you'd like, try adjusting the " [:code "width-fn"] " and " [:code "width-output"] " parameters first. Then if that doesn't suit, try supplying a function-specific formatting directive in the " [:code ":fn-map-additions"] " value of the " [:em "options map"] " in " [:code "readmoi_options.edn"] ". The " [:code "zprint"] " pretty-printer has an astronomical amount of settings, but in the end, it just tries to do what its author thinks looks best. Almost all the time it works great. My advice: don't chase perfection, just get it looking pretty good and spend the extra time on editing your prose."]]

@@ -1,7 +1,7 @@
 [:section#intro
  [:h2 "Introduction"]
 
- [:p "Software documentation should have lots of examples. But it's kinda a pain to write " [:span.small-caps "html"] " or markdown with code, copying and pasting, back-and-forth. And if the software changes, the examples may no longer be accurate. It sure would be nice if we could write " [:code "(+ 1 2)"] ", and the document would automatically insert " [:code "3"] " immediately afterwards. And if we ever decide to redefine " [:code "+"] ", re-generating the document would update all the results."]
+ [:p "Software documentation should have lots of examples. But it's kinda a pain to write " [:span.small-caps "html"] " or markdown containing code examples. Write some code in the editor, evaluate it, copy and paste it into the ReadMe, back-and-forth. And if the software changes, the examples may no longer be accurate. It sure would be nice if we could write " [:code "(+ 1 2)"] " directly into the ReadMe, and the document would automatically insert " [:code "3"] " immediately afterwards. And if we ever decide to redefine " [:code "+"] ", re-generating the document would update all the results."]
 
  [:p "Developing Clojure is a pleasure because we're writing the code while standing inside the code itself. Markdown and " [:span.small-caps "html"] " don't provide that. Plus, my editor is already set up for " [:span.small-caps "lisp"] " code structural editing, and I am hesitant to give it up."]
 

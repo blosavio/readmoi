@@ -1,0 +1,32 @@
+{:date {:year 2024
+        :month "November"
+        :day 26}
+ :responsible {:name "Brad Losavio"
+               :email "blosavio@sagevisuals.com"}
+ :version 2
+ :comment ""
+ :project-status :active
+ :stable false
+ :urgency :medium
+ :breaking? true
+ :changes
+ [{:description "Added new dev (i.e., non-breaking) dependency, Chlog, for generating changelogs."
+   :date {:year 2024
+          :month "November"
+          :day 26}
+   :change-type :added-namespaces
+   :breaking? false}
+
+  {:description "Removed no-longer-needed dev-time namespace, `readmoi-project-changelog-generator`, for generating custom changelogs."
+   :date {:year 2024
+          :month "November"
+          :day 26}
+   :change-type :removed-namespaces
+   :breaking? false}
+  
+  {:description "Improved handling of defaults by collecting them into `readmoi_defaults.clj` instead of scattering them around the source."
+   :date {:year 2024
+          :month "November"
+          :day 26}
+   :change-type :implementation
+   :breaking? true}]}

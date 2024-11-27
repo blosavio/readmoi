@@ -160,7 +160,7 @@
     #_ (require '[speculoos.utility :refer [defpred]])
     #_ (print-form-then-eval "(defpred :awesome-predicate int? #(rand 99))")
     #_ [:code "(defpred :awesome-predicate int? #(rand 99))"]
-
+    
     (print-form-then-eval "(require '[readmoi.core :as rmoi])")
     [:code "(require '[readmoi.core :as rmoi])"]
 
@@ -412,23 +412,23 @@
 
 (deftest generate-title-section-tests
   (are [x y] (= x y)
-        (generate-title-section "Test title")
-        [[:h1 "Test title"] nil]
-        
-        (generate-title-section "Test title" "Test subtitle")
-        [[:h1 "Test title"] [:em "Test subtitle"]]))
+    (generate-title-section "Test title")
+    [[:h1 "Test title"] nil]
+
+    (generate-title-section "Test title" "Test subtitle")
+    [[:h1 "Test title"] [:em "Test subtitle"]]))
 
 
 (deftest generate-license-section-tests
   (are [x y] (= x y)
-    (generate-license-section)
-    [[:h2 "License"] [:p "This program and the accompanying materials are made available under the terms of the " [:a {:href "https://opensource.org/license/MIT"} "MIT License"] "."]]
-
     (generate-license-section nil)
-    [[:h2 "License"] [:p "This program and the accompanying materials are made available under the terms of the " [:a {:href "https://opensource.org/license/MIT"} "MIT License"] "."]]
+    [[:h2 "License"] [:p nil]]
 
     (generate-license-section "foo" "bar" "baz")
-    [[:h2 "License"] [:p "foo" "bar" "baz"]]))
+    [[:h2 "License"] [:p "foo" "bar" "baz"]]
+
+    (generate-license-section "This program and the accompanying materials are made available under the terms of the " [:a {:href "https://opensource.org/license/MIT"} "MIT License"] ".")
+    [[:h2 "License"] [:p "This program and the accompanying materials are made available under the terms of the " [:a {:href "https://opensource.org/license/MIT"} "MIT License"] "."]]))
 
 
 (run-tests)

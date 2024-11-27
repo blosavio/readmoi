@@ -89,13 +89,13 @@ Intended to be referenced within hiccup/html section files.")
        :doc *fn-map-additions*-docstring} *fn-map-additions* {})
 
 (def ^{:dynamic true
-       :doc *project-group*-docstring} *project-group* "")
+       :doc *project-group*-docstring} *project-group*)
 
 (def ^{:dynamic true
-       :doc *project-name*-docstring} *project-name* "")
+       :doc *project-name*-docstring} *project-name*)
 
 (def ^{:dynamic true
-       :doc *project-version*-docstring} *project-version* nil)
+       :doc *project-version*-docstring} *project-version*)
 
 
 (defn comment-newlines
@@ -174,7 +174,8 @@ Intended to be referenced within hiccup/html section files.")
 
 
 (defn render-fn-obj-str
-  "Helper function to convert string `s`, representing a clojure.core predicate, into a string-ized nREPL function obj rendering."
+  "Helper function to convert string `s`, representing a clojure.core predicate,
+  into a string-ized nREPL function obj rendering."
   {:UUIDv4 #uuid "65d6b999-4628-43bb-97ac-f8b775829470"
    :no-doc true}
   [s]
@@ -355,11 +356,10 @@ Intended to be referenced within hiccup/html section files.")
 
 
 (defn section-blocks
-  "Create hiccup html section blocks given a vector of `sections`, in 
+  "Create hiccup html section blocks given a vector of `sections`, in
   `directory` (defaults to 'resources/readme_sections')."
   {:UUIDv4 #uuid "15893381-f284-4b5e-9680-c8095161c3d9"
    :no-doc true}
-  ([sections] (section-blocks sections "resources/readme_sections/"))
   ([sections directory]
    (let [filenamer (fn [m] (str directory
                                 (clojure.string/replace (or (:section-href m)
@@ -541,7 +541,7 @@ Intended to be referenced within hiccup/html section files.")
   {:UUIDv4 #uuid "1c44d58f-31fa-4ea6-a7d1-7d4b20d439df"
    :no-doc true}
   [opts page-body & [project-name project-description]]
-  (spit (or (str (opts :readme-html-directory) (opts :readme-html-filename)) "doc/readme.html")
+  (spit (str (opts :readme-html-directory) (opts :readme-html-filename))
         (revert-fn-obj-rendering (page-template
                                   (str
                                    (or (opts :project-name-formatted) project-name)
@@ -559,7 +559,7 @@ Intended to be referenced within hiccup/html section files.")
   {:UUIDv4 #uuid "13cc031d-41fa-4f4a-b5ba-70a7399af8b2"
    :no-doc true}
   [opts page-body]
-  (spit (or (str (opts :readme-markdown-directory) (opts :readme-markdown-filename)) "README.md")
+  (spit (str (opts :readme-markdown-directory) (opts :readme-markdown-filename))
         (-> page-body
             (concat [(page-footer (opts :copyright-holder) (opts :readme-UUID))])
             h2/html
@@ -586,13 +586,10 @@ Intended to be referenced within hiccup/html section files.")
   {:UUIDv4 #uuid "25a58e97-ebee-4086-8450-4943f0f0ca41"
    :no-doc true}
   [& license-contents]
-  (let [default-license [:p "This program and the accompanying materials are made available under the terms of the "
-                         [:a {:href "https://opensource.org/license/MIT"} "MIT License"]
-                         "."]]
-    [[:h2 "License"]
-     (if (first license-contents)
-       (into [:p] license-contents)
-       default-license)]))
+  [[:h2 "License"] (into [:p] license-contents)])
+
+
+(load "readmoi_defaults")
 
 
 (defn generate-all
@@ -600,12 +597,19 @@ Intended to be referenced within hiccup/html section files.")
   markdown ReadMe.
 
   See project documentation for details on the structure of the options map.
+  Default values are sourced from the [defaults file](https://github.com/blosavio/readmoi/blob/main/src/readmoi/readmoi_defaults.clj).
 
-  Dynamic vars that govern output:
+  Dynamic vars that govern output formatting:
 
   * [[*wrap-at*]]
   * [[*separator*]]
-  * [[*fn-map-additions*]]
+
+  Dynamic vars that may be referred for creating content (e.g., _Setup_
+  section):
+
+  * [[*project-group*]]
+  * [[*project-name*]]
+  * [[*project-version*]]
 
   Example:
   ```clojure
@@ -617,20 +621,18 @@ Intended to be referenced within hiccup/html section files.")
   ```"
   {:UUIDv4 #uuid "247ce1b3-6eac-40d2-bd01-c94ff9026e69"}
   [project-metadata opt]
-  (let [desired-*wrap-at* (or (opt :wrap-at) *wrap-at*)
-        desired-*separator* (or (opt :separator) *separator*)
-        desired-*fn-map-additions* (or (opt :fn-map-additions) *fn-map-additions*)]
-    (binding [*wrap-at* desired-*wrap-at*
-              *separator* desired-*separator*
-              *fn-map-additions* desired-*fn-map-additions*
+  (let [options-n-defaults (merge defaults opt)]
+    (binding [*wrap-at* (or (options-n-defaults :wrap-at) *wrap-at*)
+              *separator* (or (options-n-defaults :separator) *separator*)
+              *fn-map-additions* (or (options-n-defaults :fn-map-additions) *fn-map-additions*)
               *project-version* (nth project-metadata 2)
               *project-group* (get-project-group-or-name project-metadata :group)
               *project-name* (get-project-group-or-name project-metadata :name)]
       (let [project-description (nth project-metadata 4)
             title-section (generate-title-section (or (opt :project-name-formatted) *project-name*)
                                                   (or (opt :project-description) project-description))
-            license-section (generate-license-section (opt :license-hiccup))
-            clojars-badge (if (opt :clojars-badge?)
+            license-section (generate-license-section (options-n-defaults :license-hiccup))
+            clojars-badge (if (options-n-defaults :clojars-badge?)
                             (generate-clojars-badge *project-group* *project-name*))
             readmoi-page-body (generate-page-body clojars-badge
                                                   (opt :sections)
@@ -638,5 +640,5 @@ Intended to be referenced within hiccup/html section files.")
                                                   title-section
                                                   license-section)]
         (do
-          (generate-readmoi-html opt readmoi-page-body)
-          (generate-readmoi-markdown opt readmoi-page-body))))))
+          (generate-readmoi-html options-n-defaults readmoi-page-body)
+          (generate-readmoi-markdown options-n-defaults readmoi-page-body))))))
