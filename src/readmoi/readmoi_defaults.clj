@@ -19,7 +19,7 @@ hash-map. See [[generate-all]].")
 
 (def ^{:doc defaults-doctring
        :no-doc true}
-  defaults
+  readmoi-defaults
   {:license-hiccup [:p "This program and the accompanying materials are made available under the terms of the "
                     [:a {:href "https://opensource.org/license/MIT"} "MIT License"]
                     "."]

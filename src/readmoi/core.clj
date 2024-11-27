@@ -621,7 +621,7 @@ Intended to be referenced within hiccup/html section files.")
   ```"
   {:UUIDv4 #uuid "247ce1b3-6eac-40d2-bd01-c94ff9026e69"}
   [project-metadata opt]
-  (let [options-n-defaults (merge defaults opt)]
+  (let [options-n-defaults (merge readmoi-defaults opt)]
     (binding [*wrap-at* (or (options-n-defaults :wrap-at) *wrap-at*)
               *separator* (or (options-n-defaults :separator) *separator*)
               *fn-map-additions* (or (options-n-defaults :fn-map-additions) *fn-map-additions*)
