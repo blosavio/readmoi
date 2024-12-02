@@ -1,14 +1,14 @@
-(defproject com.sagevisuals/readmoi "2-SNAPSHOT1"
+(defproject com.sagevisuals/readmoi "2"
   :description "A Clojure library for generating a project ReadMe from hiccup/html."
-  :url "https://blosavio.github.io/readmoi/home.html"
+  :url "https://github.com/blosavio/readmoi"
   :license {:name "MIT License"
             :url "https://opensource.org/license/mit"
             :distribution :repo}
-  :dependencies [[org.clojure/clojure "1.12.0"]
-                 [org.clojure/test.check "1.1.1"]]
+  :dependencies [[org.clojure/clojure "1.12.0"]]
   :repl-options {:init-ns readmoi.core}
   :plugins []
-  :profiles {:dev {:dependencies [[hiccup "2.0.0-RC3"]
+  :profiles {:dev {:dependencies [[org.clojure/test.check "1.1.1"]
+                                  [hiccup "2.0.0-RC3"]
                                   [zprint "1.2.9"]
                                   [com.sagevisuals/chlog "0-SNAPSHOT2"]]
                    :plugins [[dev.weavejester/lein-cljfmt "0.12.0"]
@@ -20,7 +20,6 @@
           :output-path "doc"
           :doc-files []
           :source-uri "https://github.com/blosavio/readmoi/blob/main/{filepath}#L{line}"
-          :html {:namespace-list :flat
-                 :transforms [[:div.sidebar.primary] [:append [:ul.index-link [:li.depth-1 [:a {:href "https://github.com/blosavio/readmoi"} "Project home"]]]]]}
-          :project {:name "ReadMoi" :version "version 2-SNAPSHOT1"}}
+          :html {:transforms [[:div.sidebar.primary] [:append [:ul.index-link [:li.depth-1 [:a {:href "https://github.com/blosavio/readmoi"} "Project home"]]]]]}
+          :project {:name "ReadMoi" :version "version 2"}}
   :scm {:name "git" :url "https://github.com/blosavio/readmoi"})

@@ -29,4 +29,11 @@
           :month "November"
           :day 26}
    :change-type :implementation
-   :breaking? true}]}
+   :breaking? true}
+
+  {:description "Changed `test.check` from a full dependency to a development dependency."
+   :date {:year 2024
+          :month "November"
+          :day 29}
+   :change-type :removed-dependency
+   :breaking? false}]}
