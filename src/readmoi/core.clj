@@ -32,7 +32,8 @@
   details."
   (:require
    [clojure.pprint :as pp]
-   [clojure.string :as str]
+   [clojure.java.shell :refer [sh]]
+   [clojure.string :as s]
    [clojure.test.check.generators :as gen]
    [zprint.core :as zp]
    [hiccup2.core :as h2]
@@ -592,6 +593,56 @@ Intended to be referenced within hiccup/html section files.")
 (load "readmoi_defaults")
 
 
+(defn tidy-html-document
+  "For html document (or substantially html-like markdown), contained in file
+  pathname string `f`, use `tidy-html` to wrap and indent the html. Tidy-ing
+  settings may be supplied by `options` vector, which completely replaces
+  [[html-tidy-defaults]].
+
+  Requires local installation of [`html-tidy`](https://www.html-tidy.org/).
+
+  Note: This utility delegates the tidy-ing task to `tidy-html`, which insists
+  on adding a missing html head, title, etc. To tidy a fragment, i.e., an
+  html body, use [[tidy-html-body]].
+
+  Note: When tidy-ing, in-line `[:code ...]` blocks et. al., may be broken
+  over lines at an undesirable space. Use a Unicode non-breaking space,
+  `U+00A0`, to maintain a coherent block. An html non-breaking space entity,
+  `&nbsp;` renders literally, and thus not suitable for this purpose."
+  {:UUIDv4 #uuid "b4f16dcb-8637-4513-8dad-2313c59363ca"}
+  ([f] (tidy-html-document f html-tidy-defaults))
+  ([f options]
+   (apply sh (concat ["tidy"] options [f]))))
+
+
+(def ^{:UUIDv4 #uuid "6a8262a1-4fac-4166-9595-b853edae34e1"
+      :no-doc true} html-head-regex #"<!DOCTYPE html>\s*<html>\s*<head>\s*<meta\s*name=\"generator\"\s*content=\"HTML Tidy for HTML5 for Linux version \d{1,2}.\d{1,2}.\d{1,2}\">\s*<title>\s*<\/title>\s*<\/head>")
+
+
+(defn tidy-html-body
+  "Given html body (or substantially html-like markdown), contained in file
+  pathname string `f`, use `tidy-html` to wrap and indent the html. Tidy-ing
+  settings may be supplied by `options` vector, which completely replaces
+  [[html-tidy-defaults]].
+
+  Useful for tidy-ing only an html body for supplying to GitHub's markdown
+  processor.
+
+  Requires local installation of [`html-tidy`](https://www.html-tidy.org/).
+
+  See also [[tidy-html-document]] for a similar utility that operates on a full
+  html document."
+  {:UUIDv4 #uuid "f5147c7f-adcb-4dea-b799-57944e0968ea"}
+  ([f] (tidy-html-body f html-tidy-defaults))
+  ([f options]
+   (do
+     (tidy-html-document f options)
+     (spit f
+           (-> f
+               slurp
+               (s/replace html-head-regex ""))))))
+
+
 (defn generate-all
   "Given `project-metadata` and ReadMoi options `opt`, write-to-file html and
   markdown ReadMe.
@@ -641,4 +692,8 @@ Intended to be referenced within hiccup/html section files.")
                                                   license-section)]
         (do
           (generate-readmoi-html options-n-defaults readmoi-page-body)
-          (generate-readmoi-markdown options-n-defaults readmoi-page-body))))))
+          (generate-readmoi-markdown options-n-defaults readmoi-page-body)
+          (if (options-n-defaults :tidy-html?)
+            (do
+              (tidy-html-document (str (options-n-defaults :readme-html-directory) (options-n-defaults :readme-html-filename)))
+              (tidy-html-body (str (options-n-defaults :readme-markdown-directory) (options-n-defaults :readme-markdown-filename))))))))))

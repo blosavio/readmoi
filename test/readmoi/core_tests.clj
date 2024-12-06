@@ -431,4 +431,38 @@
     [[:h2 "License"] [:p "This program and the accompanying materials are made available under the terms of the " [:a {:href "https://opensource.org/license/MIT"} "MIT License"] "."]]))
 
 
+(def html-head-test-1
+  "<!DOCTYPE html><html><head><meta name=\"generator\" content=\"HTML Tidy for HTML5 for Linux version 5.6.0\"><title></title></head>")
+
+(def html-head-test-2
+  "<!DOCTYPE html>
+<html>
+<head>
+<meta name=\"generator\" content=\"HTML Tidy for HTML5 for Linux version 5.6.0\">
+<title></title>
+</head>
+")
+
+
+(def html-head-test-3
+  "<!DOCTYPE html>
+<html>
+  <head>
+    <meta name=\"generator\" content=\"HTML Tidy for HTML5 for Linux version 5.6.0\">
+    <title></title>
+  </head>
+")
+
+
+(deftest html-head-regex-tests
+  (are [x] (nil? x)
+    (re-find html-head-regex "")
+    (re-find html-head-regex "abc")
+    (re-find html-head-regex "<!DOCTYPE>"))
+  (are [x] ((complement nil?) x)
+    (re-find html-head-regex html-head-test-1)
+    (re-find html-head-regex html-head-test-2)
+    (re-find html-head-regex html-head-test-3)))
+
+
 (run-tests)

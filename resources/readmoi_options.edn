@@ -27,4 +27,6 @@
  :sections-directory "resources/readme_sections/"
 
  :separator " => "
- :wrap-at 80}
+ :wrap-at 80
+
+ :tidy-html? true}

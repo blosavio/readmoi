@@ -73,9 +73,11 @@
 
     [:li [:p [:code ":sections-directory"] " Alternative directory to find sections hiccup " [:code ".clj"] " files. Include trailing '/'. Default " [:code "resources/readme_sections/"] "."]]
 
-    [:li [:p [:code ":separator"] " String separating the " [:span.small-caps "s"] "-expression and the evaluated result. Defaults to " [:code "' => '"] "."]]
+    [:li [:p [:code ":separator"] " String separating the " [:span.small-caps "s"] "-expression and the evaluated result. Defaults to " [:code "' => '"] "."]]
 
-    [:li [:p [:code ":wrap-at"] " Column wrap base condition. Defaults to " [:code "80"] "."]]]]
+    [:li [:p [:code ":wrap-at"] " Column wrap base condition for " [:a {:href "https://blosavio.github.io/readmoi/readmoi.core.html#var-print-form-then-eval"} [:code "print-form-then-eval"]] " and " [:a {:href "https://blosavio.github.io/readmoi/readmoi.core.html#var-prettyfy"}  [:code "prettyfy"]] ". Defaults to " [:code "80"] "."]]
+
+    [:li [:p [:code ":tidy-html?"] " Indent and wrap " [:span.small-caps "html"] " and markdown files. Defaults to " [:code "nil"] ". Setting this option to " [:code "true"] " may be desirable minimize the version control 'diff' from one commit to the next. Note that the tidy-ing procedure may insert line-breaks at an undesireable spot, e.g., within an in-text " [:code "[:code ...]"] " block. To keep the block on one line, use a Unicode " [:code "U+0A00"] " non-breaking space. An html non-breaking space entity, " [:code "&nbsp;"] ", gets rendered literally."]]]]
 
   [:li
    [:p "Generate the " [:span.small-caps "html"] " and markdown files. We could evaluate…"]

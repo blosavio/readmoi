@@ -34,4 +34,45 @@ hash-map. See [[generate-all]].")
 
    :project-group ""
    :project-name ""
-   :project-version nil})
+   :project-version nil
+
+   :tidy-html? false})
+
+
+(def ^{:no-doc true} html-tidy-defaults-docstring
+  "A vector of strings to be supplied to `tidy-html` as if on the command line.
+  The most notable defaults are:
+
+  * `-i` indent
+  * `--quiet` limits output report
+  * `--wrap` wrap lines at column `160`
+  * `--write-back` over-write original file")
+
+
+(def ^{:doc html-tidy-defaults-docstring} html-tidy-defaults
+  ["-i"
+   "--coerce-endtags" "no"
+   "--drop-empty-elements" "no"
+   "--drop-empty-paras" "no"
+   "--drop-proprietary-attributes" "no"
+   "--escape-scripts" "no"
+   "--fix-backslash" "no"
+   "--fix-bad-comments" "no"
+   "--fix-style-tags" "no"
+   "--fix-uri" "no"
+   "--indent" "yes"
+   "--join-styles" "no"
+   "--keep-time" "yes"
+   "--merge-divs" "no"
+   "--merge-emphasis" "no"
+   "--merge-spans" "no"
+   "--output-html" "yes"
+   "--preserve-entities" "yes"
+   "--quiet" "yes"
+   "--show-errors" "0"
+   "--show-info" "no"
+   "--show-warnings" "no"
+   "--uppercase-attributes" "preserve"
+   "--warn-proprietary-attributes" "no"
+   "--wrap" "160"
+   "--write-back" "yes"])
