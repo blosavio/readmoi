@@ -12,13 +12,14 @@
   * `:readme-html-filename`
   * `:readme-markdown-directory`
   * `:readme-markdown-filename`
+  * `:tidy-html?`
 
 Override default values by associating new values into the ReadMoi _options_
 hash-map. See [[generate-all]].")
 
 
 (def ^{:doc defaults-doctring
-       :no-doc true}
+       :UUIDv4 #uuid "0de19e8c-342f-46ce-b6e0-baaa9f81b6a6"}
   readmoi-defaults
   {:license-hiccup [:p "This program and the accompanying materials are made available under the terms of the "
                     [:a {:href "https://opensource.org/license/MIT"} "MIT License"]
