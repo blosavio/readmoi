@@ -19,11 +19,11 @@
       <h3>
         Leiningen/Boot
       </h3>
-      <pre><code>[com.sagevisuals/readmoi &quot;3-SNAPSHOT1&quot;]</code></pre>
+      <pre><code>[com.sagevisuals/readmoi &quot;3&quot;]</code></pre>
       <h3>
         Clojure CLI/deps.edn
       </h3>
-      <pre><code>com.sagevisuals/readmoi {:mvn/version &quot;3-SNAPSHOT1&quot;}</code></pre>
+      <pre><code>com.sagevisuals/readmoi {:mvn/version &quot;3&quot;}</code></pre>
       <h3>
         Require
       </h3>
@@ -388,7 +388,7 @@
     <p></p>
     <p id="page-footer">
       Copyright © 2024 Brad Losavio.<br>
-      Compiled by <a href="https://github.com/blosavio/readmoi">ReadMoi</a> on 2024 December 06.<span id="uuid"><br>
+      Compiled by <a href="https://github.com/blosavio/readmoi">ReadMoi</a> on 2024 December 08.<span id="uuid"><br>
       e0d63371-4eb7-4431-a5f1-1cf0f5c46a72</span>
     </p>
   </body>
