@@ -19,11 +19,11 @@
       <h3>
         Leiningen/Boot
       </h3>
-      <pre><code>[com.sagevisuals/readmoi &quot;4-SNAPSHOT0&quot;]</code></pre>
+      <pre><code>[com.sagevisuals/readmoi &quot;4&quot;]</code></pre>
       <h3>
         Clojure CLI/deps.edn
       </h3>
-      <pre><code>com.sagevisuals/readmoi {:mvn/version &quot;4-SNAPSHOT0&quot;}</code></pre>
+      <pre><code>com.sagevisuals/readmoi {:mvn/version &quot;4&quot;}</code></pre>
       <h3>
         Require
       </h3>
