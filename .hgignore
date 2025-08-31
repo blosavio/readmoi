@@ -10,3 +10,7 @@ pom.xml.asc
 /.lein-*
 /.nrepl-port
 .git/**
+.hgtags
+.lein-failures
+.lein-repl-history
+.nrepl-port

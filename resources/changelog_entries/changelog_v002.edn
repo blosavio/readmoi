@@ -4,7 +4,7 @@
  :responsible {:name "Brad Losavio"
                :email "blosavio@sagevisuals.com"}
  :version 2
- :comment ""
+ :comment "Organization: Adjusting namespaces, dependencies, and location of defaults."
  :project-status :active
  :stable false
  :urgency :medium
@@ -37,3 +37,4 @@
           :day 29}
    :change-type :removed-dependency
    :breaking? false}]}
+

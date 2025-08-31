@@ -201,7 +201,7 @@
   (are [x] x
     (clojure.string/starts-with? (copyright "Foo Bar") "Copyright © ")
     (clojure.string/ends-with? (copyright "Foo Bar") " Foo Bar.")
-    (some? (re-find #"^Copyright © 20\d{2} Foo Bar.$" (copyright "Foo Bar")))))
+    (some? (re-find #"^Copyright © 2024–20\d{2} Foo Bar.$" (copyright "Foo Bar")))))
 
 
 (deftest nav-tests
@@ -252,7 +252,10 @@
     [[:section#part-0 [:h2 "Part 0 title: Introduction"] [:p "Part 0 text."] [:p "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."]] [:section#part-1 [:h2 "Part 1 title: Foo Bar"] [:p "Part 1 text. With an " [:a {:href "http://example.com"} "external link"] "."] [:p "Sodales sed neque congue imperdiet pretium vivamus mus phasellus non. Ante massa montes senectus inceptos suscipit eros tempus torquent. Porta mus magna consequat scelerisque sollicitudin tempus ullamcorper. Dis neque in dui amet conubia nisl pretium. Ad rutrum nascetur dapibus sodales tellus auctor eu orci. Maecenas sit dignissim tincidunt maecenas curabitur quisque. Rhoncus quam aliquam felis mollis egestas consectetur."]] [:section#part-2 [:h2 "Part 2 title: Baz"] [:p "Part 2 text, with an " [:a {:href "#part-0"} "internal link"] " to Part 0."] [:p "Dapibus semper diam ante fames etiam sed. Mattis malesuada ipsum orci ullamcorper iaculis. Vulputate elit aptent diam augue ornare inceptos egestas vestibulum. Lobortis phasellus litora sed metus curae varius eros. Sagittis metus condimentum montes lectus rutrum aliquam dignissim fringilla. Eget a aptent nostra; amet himenaeos vivamus donec. Dignissim rutrum massa pretium sed netus. Metus montes efficitur habitasse augue consectetur elementum."]]]))
 
 
-(def test-html-regex #"<!DOCTYPE html>\n<html lang=\"en\"><head><link href=\"project.css\" rel=\"stylesheet\" type=\"text/css\"><title>Page Template Test Title</title><meta charset=\"utf-8\" compile-date=\"\d{4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}\" content=\"width=device-width, initial-scale=1\" name=\"viewport\"></head><body>Page template test body text.<p id=\"page-footer\">Copyright © \d{4} Foo Bar.<br>Compiled by <a href=\"https://github.com/blosavio/readmoi\">ReadMoi</a> on \d{4} \w{3,9} \d{1,2}.<span id=\"uuid\"><br>sham UUID</span></p></body></html>")
+(def test-html-regex #"<!DOCTYPE html>\n<html lang=\"en\"><head><link href=\"project.css\" rel=\"stylesheet\" type=\"text/css\"><title>Page Template Test Title</title><meta charset=\"utf-8\" compile-date=\"\d{4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}\" content=\"width=device-width, initial-scale=1\" name=\"viewport\"></head><body>Page template test body text.<p id=\"page-footer\">Copyright © 2024–\d{4} Foo Bar.<br>Compiled by <a href=\"https://github.com/blosavio/readmoi\">ReadMoi</a> on \d{4} \w{3,9} \d{1,2}.<span id=\"uuid\"><br>sham UUID</span></p></body></html>")
+
+
+(def this-year (.format (java.text.SimpleDateFormat. "yyyy") (java.util.Date.)))
 
 
 (deftest page-footer-tests
@@ -260,7 +263,8 @@
     (page-footer "me" "UUID")
     (assoc
      [:p#page-footer
-      "Copyright © 2024 me." [:br]
+      (str "Copyright © 2024–" this-year " me.")
+      [:br]
       "Compiled by " [:a {:href "https://github.com/blosavio/readmoi"} "ReadMoi"] " on " "<assoc updated date>" "."
       [:span#uuid [:br] "UUID"]]
      6
@@ -269,7 +273,8 @@
     (page-footer "me" "UUID" [:a {:href "example.com"} "lib"])
     (assoc
      [:p#page-footer
-      "Copyright © 2024 me." [:br]
+      (str "Copyright © 2024–" this-year " me.")
+      [:br]
       "Compiled by " [:a {:href "example.com"} "lib"] " on " "<assoc updated date>" "."
       [:span#uuid [:br] "UUID"]]
      6
@@ -465,4 +470,5 @@
     (re-find html-head-regex html-head-test-3)))
 
 
-(run-tests)
+#_(run-tests)
+

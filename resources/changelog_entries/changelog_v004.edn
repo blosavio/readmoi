@@ -1,0 +1,19 @@
+{:date {:year 2025
+        :month "August"
+        :day 30}
+ :responsible {:name "Brad Losavio"
+               :email "blosavio@sagevisuals.com"}
+ :version 4
+ :comment "Non-explicit user dependencies."
+ :project-status :active
+ :stable false
+ :urgency :medium
+ :breaking? false
+ :changes
+ [{:description "Promoted hiccup, test.check, and zprint to full dependencies (from dev dependencies) so that a project no longer needs to explicitly require them."
+   :date {:year 2025
+          :month "August"
+          :day 30}
+   :change-type :bug-fix
+   :breaking? false}]}
+
