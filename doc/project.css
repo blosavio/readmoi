@@ -1,11 +1,12 @@
 @charset "utf-8";
 
-/* CSS for navigation, footers, code side-by-sides, etc */
+/* Copyright © 2025 Brad Losavio. */
+/* licensed under the MIT License https://opensource.org/license/MIT */
+/* UUIDv4 c7f963c4-160b-4e02-9207-2c3c657d4553 */
 
 dt {
     font-weight: bold;
 }
-
 
 #page-footer {
     font-size: 100%;
@@ -34,88 +35,19 @@ dt {
     font-variant: small-caps;
 }
 
-span.totally-not-mail r {
-    display: none;
-}
-
 .centered {
     text-align: center;
 }
 
-.business-card {
-    box-sizing: border-box;
-    width: 90mm;
-    height: 55mm;
-    padding: 0mm;
-    border: 2px solid lightgray;
-    text-align: left;
-    margin: auto;
-    position: relative;
-}
-
-.business-card ol {
-    padding-left: auto;
-    padding-right: auto;
-}
-
-.business-card li {
-    font-size: 85%;
-}
-
-.business-card li + li {
-    margin-top: 03px;
-}
-
-.business-card-container {
-    width: 55%;
-}
-
-.sticky-note {
-    width: 76mm;
-    height: 76mm;
-}
-
-.sticky-note p {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.sticky-note ol {
-    margin-top: 5px;
-    margin-bottom: 0px;
-    padding-left: 25px;
-}
-
 .de-highlight {
-    color: gray;
+    color: silver;
     font-weight: lighter;
 }
 
 .highlight {
-    color: red;
+    color: black;
     font-weight: bold;
-    font-size: 120%;
-}
-
-.tight {
-    width: 25%;
-}
-
-.c1 {
-    color: red;
-}
-
-.c2 {
-    color: blue;
-}
-
-.c3 {
-    color: green;
-}
-
-.c4 {
-    color: #ff8c00; /* darkorange; */
-    /* color: #bf5700;*/ /* burnt orange */
+    font-size: 100%;
 }
 
 .no-display {
@@ -144,3 +76,26 @@ body {
 .wide-body {
     width: 80rem;
 }
+
+caption {
+    caption-side: bottom;
+}
+
+td {
+    padding: 0.5rem 0.75rem;
+}
+
+.collapsable {
+    display: none;
+}
+
+hr {
+    margin-top: 1.5rem;
+    margin-bottom: 4rem;
+    border-right-style: none;
+    border-left-style: none;
+    border-bottom-style: none;
+    border-width: 1.5px;
+    color: whitesmoke;
+}
+

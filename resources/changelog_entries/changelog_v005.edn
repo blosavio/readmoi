@@ -1,0 +1,59 @@
+{:date {:year 2025
+        :month "October"
+        :day 6}
+ :responsible {:name "Brad Losavio"
+               :email "blosavio@sagevisuals.com"}
+ :version 5
+ :comment "Various quality-of-life improvements."
+ :project-status :active
+ :stable false
+ :urgency :medium
+ :breaking? false
+ :changes
+ [{:description "Added a `-main` function, callable from the command line."
+   :date {:year 2025
+          :month "October"
+          :day 6}
+   :change-type :added-functions
+   :added-functions ['-main]
+   :reference {:source "GitHub Issue #1"
+               :url "https://github.com/blosavio/readmoi/issues/1"}
+   :breaking? false}
+
+  {:description "Added flexible options file-loading."
+   :date {:year 2025
+          :month "October"
+          :day 6}
+   :change-type :relaxed-requirements
+   :added-functions ['-main]
+   :reference {:source "GitHub Issue #2"
+               :url "https://github.com/blosavio/readmoi/issues/2"}
+   :breaking? false}
+
+  {:description "Enhanced project metadata detection to also handle 'pom.xml'."
+   :date {:year 2025
+          :month "October"
+          :day 7}
+   :change-type :relaxed-requirements
+   :reference {:source "GitHub Issue #3"
+               :url "https://github.com/blosavio/readmoi/issues/3"}
+   :breaking? false}
+
+  {:description "Added optional suppression of `def` evaluations."
+   :date {:year 2025
+          :month "October"
+          :day 8}
+   :change-type :relaxed-requirements
+   :reference {:source "GitHub Issue #4"
+               :url "https://github.com/blosavio/readmoi/issues/4"}
+   :breaking? false}
+
+  {:description "Enhancement to function object de-rendering to handle the way
+ leiningen renders function objects in addition to the way CIDER/nREPL renders
+ function objects."
+   :date {:year 2025
+          :month "October"
+          :day 11}
+   :change-type :relaxed-requirements
+   :breaking? false}]}
+

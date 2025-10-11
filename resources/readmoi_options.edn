@@ -16,6 +16,8 @@
  :project-description "A Clojure library for generating a project ReadMe from hiccup/html"
  :project-name-formatted "ReadMoi"
 
+ :preferred-project-metadata :lein
+
  :readme-UUID #uuid "e0d63371-4eb7-4431-a5f1-1cf0f5c46a72"
 
  :readme-html-directory "doc/"

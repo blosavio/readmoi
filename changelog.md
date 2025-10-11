@@ -4,7 +4,64 @@
       ReadMoi library changelog
     </h1><a href="https://github.com/blosavio/chlog">changelog info</a>
     <section>
-      <h3>
+      <h3 id="v5">
+        version 5
+      </h3>
+      <p>
+        2025 October 6<br>
+        Brad Losavio (blosavio@sagevisuals.com)<br>
+        <em>Description:</em> Various quality-of-life improvements.<br>
+        <em>Project status:</em> <a href="https://github.com/metosin/open-source/blob/main/project-status.md">active</a><br>
+        <em>Urgency:</em> medium<br>
+        <em>Breaking:</em> no
+      </p>
+      <p></p>
+      <div>
+        <em>added functions:</em> <code>-main</code>
+      </div>
+      <p></p>
+      <div>
+        <h4>
+          Breaking changes
+        </h4>
+        <ul></ul>
+        <h4>
+          Non-breaking changes
+        </h4>
+        <ul>
+          <li>
+            <div>
+              <a href="https://github.com/blosavio/readmoi/issues/1">GitHub Issue #1</a>: Added a `-main` function, callable from the command line.
+            </div>
+          </li>
+          <li>
+            <div>
+              <a href="https://github.com/blosavio/readmoi/issues/2">GitHub Issue #2</a>: Added flexible options file-loading.
+            </div>
+          </li>
+          <li>
+            <div>
+              <a href="https://github.com/blosavio/readmoi/issues/3">GitHub Issue #3</a>: Enhanced project metadata detection to also handle
+              &apos;pom.xml&apos;.
+            </div>
+          </li>
+          <li>
+            <div>
+              <a href="https://github.com/blosavio/readmoi/issues/4">GitHub Issue #4</a>: Added optional suppression of `def` evaluations.
+            </div>
+          </li>
+          <li>
+            <div>
+              Enhancement to function object de-rendering to handle the way leiningen renders function objects in addition to the way CIDER/nREPL renders
+              function objects.
+            </div>
+          </li>
+        </ul>
+      </div>
+      <hr>
+    </section>
+    <section>
+      <h3 id="v4">
         version 4
       </h3>
       <p>
@@ -36,7 +93,7 @@
       <hr>
     </section>
     <section>
-      <h3>
+      <h3 id="v3">
         version 3
       </h3>
       <p>
@@ -71,7 +128,7 @@
       <hr>
     </section>
     <section>
-      <h3>
+      <h3 id="v2">
         version 2
       </h3>
       <p>
@@ -118,7 +175,7 @@
       <hr>
     </section>
     <section>
-      <h3>
+      <h3 id="v1">
         version 1
       </h3>
       <p>
@@ -160,7 +217,7 @@
       <hr>
     </section>
     <section>
-      <h3>
+      <h3 id="v0">
         version 0
       </h3>
       <p>
@@ -186,7 +243,7 @@
     </section>
     <p id="page-footer">
       Copyright © 2024–2025 Brad Losavio.<br>
-      Compiled by <a href="https://github.com/blosavio/chlog">Chlog</a> on 2025 August 31.<span id="uuid"><br>
+      Compiled by <a href="https://github.com/blosavio/chlog">Chlog</a> on 2025 October 11.<span id="uuid"><br>
       aa13a964-fbe5-4347-92f5-90ba0da27bdb</span>
     </p>
   </body>

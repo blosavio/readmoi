@@ -7,9 +7,9 @@
  :changelog-html-filename "changelog.html"
 
  :changelog-markdown-directory ""
- :changelog-markdown-filename "changelog.md"
 
  :changelog-entries-directory "resources/changelog_entries/"
  :changelog-data-file "changelog.edn"
 
  :tidy-html? true}
+

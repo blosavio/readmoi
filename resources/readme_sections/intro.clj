@@ -10,3 +10,4 @@
  [:p "But, GitHub ReadMe documents are generated from markdown files, not hiccup. The ReadMoi library generates " [:span.small-caps "html"] " and markdown ReadMe files — with up-to-date, evaluated code examples — from hiccup source."
 
   [:p "The resulting ReadMe document is structured exactly as you see here: a Clojars badge, navigation links, one or more " [:span.small-caps "html"] " " [:code (raw "&lt;section&gt;")] "s (" [:em "Intro"] ", " [:em "Usage"] ", " [:em "Glossary"] ", etc.) containing evaluated code examples, a license statement, and a footer with copyright and compilation metadata."]]]
+

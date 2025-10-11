@@ -28,13 +28,31 @@
   * `:separator`
   * `:wrap-at`
 
+  Default values are sourced from the
+  [defaults file](https://github.com/blosavio/readmoi/blob/main/src/readmoi/readmoi_defaults.clj).
+
+  Dynamic vars that govern output formatting:
+
+  * [[*wrap-at*]]
+  * [[*separator*]]
+  * [[*def-patterns*]]
+
+  Dynamic vars that may be referred for creating content (e.g., _Setup_
+  section):
+
+  * [[*project-group*]]
+  * [[*project-name*]]
+  * [[*project-version*]]
+
   See [project's documentation](https://github.com/blosavio/readmoi) for
   details."
   (:require
+   [clojure.java.io :as io]
    [clojure.pprint :as pp]
    [clojure.java.shell :refer [sh]]
-   [clojure.string :as s]
+   [clojure.string :as str]
    [clojure.test.check.generators :as gen]
+   [clojure.xml :as xml]
    [zprint.core :as zp]
    [hiccup2.core :as h2]
    [hiccup.page :as page]
@@ -42,9 +60,6 @@
    [hiccup.form :as form]
    [hiccup.util :as util])
   (:import java.util.Date))
-
-
-;; FireFox apparently won't follow symlinks to css or font files
 
 
 (def ^{:no-doc true} *wrap-at*-docstring
@@ -80,6 +95,11 @@
 Intended to be referenced within hiccup/html section files.")
 
 
+(def ^{:no-doc true} *def-patterns*-docstring
+  "A set of strings that governs when [[print-form-then-eval]] suppresses
+ printing the evaluated value. Defaults to `#{\"def\" \"defn\" \"defmacro\"}`.")
+
+
 (def ^{:dynamic true
        :doc *wrap-at*-docstring} *wrap-at* 80)
 
@@ -98,6 +118,84 @@ Intended to be referenced within hiccup/html section files.")
 (def ^{:dynamic true
        :doc *project-version*-docstring} *project-version*)
 
+(def ^{:dynamic true
+       :doc *def-patterns*-docstring} *def-patterns* #{"def"
+                                                       "defn"
+                                                       "defmacro"})
+
+
+(defn lein-metadata
+  "Queries the Leiningen 'project.clj' file's `defproject` expression and
+  returns a hashmap of `:version`, `:name`, `:group`, and `:description`, all
+  associated values strings."
+  {:UUIDv4 #uuid "51602a3b-e597-4d2d-826b-c9b74cc04acc"
+   :no-doc true}
+  []
+  (let [raw-metadata (read-string (slurp "project.clj"))
+        project-version (nth raw-metadata 2)
+        group-name (nth raw-metadata 1)
+        project-description (nth raw-metadata 4)]
+    {:version project-version
+     :group (namespace group-name)
+     :name (name group-name)
+     :description project-description}))
+
+
+(defn pom-xml-metadata
+  "Queries 'pom.xml' file and returns a hashmap of `:version`, `:name`,
+  `:group`, and `:description`, all associated values strings.
+  "
+  {:UUIDv4 #uuid "1a50cc65-99b4-4578-b7d7-44b856869fb9"
+   :no-doc true}
+  []
+  (let [raw-metadata (->> (xml/parse "pom.xml")
+                          :content)
+        get-by-keyword (fn [kw] (->(filter #(= (:tag %) kw) raw-metadata)
+                                   first
+                                   :content
+                                   first))
+        project-version (get-by-keyword :version)
+        project-name (get-by-keyword :name)
+        project-group (get-by-keyword :groupId)
+        project-description (get-by-keyword :description)]
+    {:version project-version
+     :name project-name
+     :group project-group
+     :description project-description}))
+
+
+(defn project-metadata
+  "Given options hashpmap `opts`, returns a hashmap of the project's metadata:
+
+  * `:version`
+  * `:group`
+  * `:name`
+  * `:description`.
+
+  The metadata is sourced in this order:
+  * If `opts` declares a preference by associated either `:lein` or `:pom-xml`
+  to  key `:preferred-project-metadata`, queries only that preference.
+  * If a preference is not specified and both sources exist, throws.
+  * If a preference is not specified and only one source exists, returns that
+    metadata.
+  * If neither 'project.clj' nor 'pom.xml' exists, throws."
+  {:UUIDv4 #uuid "e67e01b1-0cb4-41c0-8c60-d4bed82e159c"
+   :no-doc true}
+  [opts]
+  (case (opts :preferred-project-metadata)
+    :lein (lein-metadata)
+    :pom-xml (pom-xml-metadata)
+    nil (let [exists? #(.exists (io/file %))
+              lein? (exists? "project.clj")
+              pom-xml? (exists? "pom.xml")
+              both-err "Both 'project.clj' and 'pom.xml' exist, but `:preferred-project-metadata` is not declared in options hashmap."
+              neither-err "Neither 'project.clj' nor 'pom.xml' exist."]
+          (cond
+            (and lein? pom-xml?) (throw (Exception. both-err))
+            lein? (lein-metadata)
+            pom-xml? (pom-xml-metadata)
+            :default (throw (Exception. neither-err))))))
+
 
 (defn comment-newlines
   "Given string s, arrow a, and comment symbol c, linebreak and indent the text.
@@ -113,7 +211,117 @@ Intended to be referenced within hiccup/html section files.")
     (clojure.string/replace arrow-prefixed-str "\n" indent)))
 
 
-(def ^{:no-doc true} fn-obj-regex #"#function[;\n\ ]*\[[\w\.\-\?]*\/([\w\?\=\<\>]*(\-?(?!\-)[\w\?]*)*)(?:--\d+)?\]")
+;; When a clojure server `eval`s a function object, it returns something like
+;;     `#function[clojure.core/inc ...]`
+;; in the case of CIDER/nREPL, or
+;;     `#object[clojure.core.inc ...]`
+;; in the case of Leiningen's CLI.
+
+;; The ReadMe document is cleaner if the functions are displayed as simply
+;; `inc`. These next few functions, one specific to the REPL and one specific to
+;; the CLI, extract all occurances of a function object within a string,
+;; replacing it with it's basic function symbol.
+
+
+
+(def ^{:no-doc true} fn-obj-regex #"#function[;\n\ ]*\[[\w\.\-\?]*\/([\w\?\=\<\>\+\'\*\!]*(\-?(?!\-)[\w\?\!]*)*)(?:--\d+)?\]")
+
+
+(comment
+
+  ;; explore matching and negative lookahead at https://regexr.com/8hkn9
+
+  ;; #function               match literal #function
+  ;; [;\n\ ]*                match zero-or-more semicolons, newlines, or spaces
+  ;; \[                      match literal open bracket
+  ;; [\w\.\-\?]*             match zero-or-more word, periods, hyphens, or question marks
+  ;; \/                      match literal forward slash
+  ;; (                       begin capture group #1
+  ;; [\w\?\=\<\>\+\'\*\!]*   match zero-or-more word, question mark, equal signs, less-thans, greater-thans, plus, apostrophe, or exclaimation marks
+  ;; (                       begin capture group #2
+  ;; \-                      match literal hyphen, but...
+  ;; (?!\-)                  negative lookahead, ...only if not followed by another hyphen
+  ;; [\w\?\!]*               match zero-or-more word, question, or exclaimation marks
+  ;; )*                      end capture group #2, zero-or-more
+  ;; )*                      end capture group #1, zero-or-more
+  ;; (?:--\d+)?              zero-or-one non-capturing groups, two hyphens followed by one-or-more digits
+  ;; \]                      match literal close bracket
+
+
+  ;; sample function object rendering strings
+
+  "#function [clojure.core/<]"
+  "#function [clojure.core/>]"
+  "#function [clojure.core/=]"
+
+  ;; possible question marks, whitespace, `\d{4}`, or multiple hyphens
+  "#function[clojure.core/int?]"
+  "#function [clojure.core/int?]"
+  "#function[clojure.core/map?--5477]"
+  "#function[project.function-specs/validate-fn-with]"
+
+  ;; see test ns for more samples
+  )
+
+
+(def cli-fn-obj-regex #"#object[\s;]*\[[\w\d\-]*.?[\w\d\-]*\/((?:[\w\d\?\+\'\!\<\>\=\*]*-?(?!-)[\w\d\?\+\'\!\<\>\=\*]*)*)-?-?\d{0,4}[^\]]*\]")
+
+
+(comment
+
+  ;; Leiningen's evaluator renders function objects differently than
+  ;; CIDER/nREPL, so must use an alternative regex
+
+  ;; #object                   match literal #object
+  ;; \[                        match literal open bracket
+  ;; [\w\d\-]*                 match zero-or-more words, digits, or hyphens
+  ;; \.?                       match zero-or-one literal periods
+  ;; [\w\d\-]*                 match zero-or-more word, digits, or hyphens
+  ;; \/                        match literal forward slash
+  ;; (                         begin capture group #1
+  ;; (?:                       begin non-capture group #2
+  ;; [\w\d\?\+\'\!\<\>\=\*]*   match zero-or-more word, digits, question marks, <, >, or +, ', *, = symbols
+  ;; -?(?!-)                   match one hyphen only if it is _not_ followed by another hyphen
+  ;; [\w\d\?\+\<\>\'\!\=\*]*   match zero-or-more word, digits, question marks, <, >, or +, ', *, = symbols
+  ;; )*                        end non-capture group #2
+  ;; )                         end capture group #1
+  ;; -?-?                      zero or two hyphens
+  ;; \d{0,4}                   zero to four digits
+  ;; .*                        zero or more anything
+
+  ;; sample function object rendering strings, no newlines
+
+  "#object[clojure.core/pos-int? 0x69f9ab8a \"clojure.core/pos-int?@69f9ab8a\"]"
+  "#object[readmoi.core/prettyfy 0x9fb4031 \"readmoi.core/prettyfy@9fb4031\"]"
+  "#object[an-ns/foo 0x9fb4031 \"an-ns/foo@9fb4031\"]"
+  "#object[nodot/baz 0x9fb4031 \"nodot/baz@9fb4031\"]"
+
+  ;; sample function object rendering strings, trailing `--\d{4}`
+
+  "#object[clojure.core/string?--5494 0x7b02e036 \"clojure.core/string?--5494@7b02e036\"]"
+  "#object[clojure.core/vector?--5498 0x570b21e0 \"clojure.core/vector?--5498@570b21e0\"]"
+  "#object[clojure.core/map?--5496 0x236f3885 \"clojure.core/map?--5496@236f3885\"]"
+
+  ;; see test ns for more samples
+  )
+
+
+(defn revert-fn-obj-rendering-repl
+  "Helper to `revert-fn-obj-rendering` for repl-style (i.e., CIDER/nrepl)
+  function objects."
+  {:UUIDv4 #uuid "ab186ae2-0866-4bc0-9666-c5c21429360c"
+   :no-doc true}
+  [s]
+  (clojure.string/replace s fn-obj-regex "$1"))
+
+
+(defn revert-fn-obj-rendering-cli
+  "Helper to `revert-fn-obj-rendering` for cli-style (i.e., leiningen), function
+  objects."
+  {:UUIDv4 #uuid "6f0b8ebb-1aae-432a-aeee-6e0229c4b4ed"
+   :no-doc true}
+  [s]
+  (clojure.string/replace (clojure.main/demunge s) cli-fn-obj-regex "$1"))
 
 
 (defn revert-fn-obj-rendering
@@ -122,56 +330,9 @@ Intended to be referenced within hiccup/html section files.")
   {:UUIDv4 #uuid "ca3e8813-3398-4663-b96a-b8289346794e"
    :no-doc true}
   [s]
-  (clojure.string/replace s fn-obj-regex "$1"))
-
-
-(comment
-
-  ;; explore matching and negative lookahead at https://regexr.com/85b0a
-
-  #"#function[;\n\ ]*\[[\w\.\-\?]*\/([\w\?\=\<\>]*(\-?(?!\-)[\w\?]*)*)(?:--\d+)?\]"
-
-  ;; #function      match literal #function
-  ;; [;\n\ ]*       match zero-or-more semicolons, newlines, or spaces
-  ;; \[             match literal open bracket
-  ;; [\w\.\-\?]*    match zero-or-more word, periods, hyphens, or question marks
-  ;; \/             match literal forward slash
-  ;; (              begin capture group #1
-  ;; [\w\?\=\<\>]*  match zero-or-more word, question mark, equal signs, less-thans, or greater-thans
-  ;; (              begin capture group #2
-  ;; \-             match literal hyphen, but...
-  ;; (?!\-)         negative lookahead, ...only if not followed by another hyphen
-  ;; [\w\?]*        match zero-or-more word or question marks
-  ;; )*             end capture group #2, zero-or-more
-  ;; )*             end capture group #1, zero-or-more
-  ;; (?:--\d+)?     zero-or-one non-capturing groups, two hyphens followed by one-or-more digits
-  ;; \]             match literal close bracket
-
-  ;; sample function object rendering strings
-
-  "#function [clojure.core/<]"
-  "#function [clojure.core/>]"
-  "#function [clojure.core/=]"
-
-  "#function[clojure.core/int?]"
-  "#function [clojure.core/int?]"
-  "#function[clojure.core/map?--5477]"
-  "#function [clojure.core/map?--5477]"
-  "#function [clojure.core/map--5477]"
-  "#function[project.core/reversed?]"
-  "#function[project.function-specs/validate-fn-with]"
-  "#function [project.function-specs/validate-fn-with]"
-
-  "#function ;;
-  [project-readme-generator/reversed?]"
-
-  "#function
-  ;; [project-readme-generator/reversed?]"
-
-  "#function
-   ;;                   [project-readme-generator/reversed?]"
-
-  )
+  (if *repl*
+    (revert-fn-obj-rendering-repl s)
+    (revert-fn-obj-rendering-cli s)))
 
 
 (defn render-fn-obj-str
@@ -208,11 +369,23 @@ Intended to be referenced within hiccup/html section files.")
                     :fn-map *fn-map-additions*}))
 
 
+(defn def-start?
+  "Given string `s` and sequence of strings `tails`, returns `true` if `s`
+  begins with `(def-something `, false otherwise."
+  {:UUIDv4 #uuid "d195cf1a-33f6-4655-9fef-b408d6bd5468"
+   :no-doc true}
+  [s tails]
+  (some (fn [z] (str/starts-with? s (str "(" z " "))) tails))
+
+
 (defn print-form-then-eval
   "Returns a hiccup `[:code]` block wrapping a Clojure stringified form
-  `str-form`, separator `sep` (default `' => '`), and evaluated value. `def`,
-  `defn`, `s/def/`, `defmacro`, `defpred`, and `require` expressions are only
-  evaled; their output is not captured.
+  `str-form`, separator `sep` (default `' => '`), and evaluated value.
+
+  `def`, `defn`, `defmacro`, and `require` expressions are only evaled; their
+  output is not captured. These exclusions may be adjusted by  associating a new
+  (possibly empty) set of strings to option `:def-patterns`, or by binding
+  `*def-patterns*`.
 
   The two optional width args supersede `*wrap-at*`.
 
@@ -286,12 +459,25 @@ Intended to be referenced within hiccup/html section files.")
       Renders as…
       ```clojure
       (inc 1) ;; --->> 2
+      ```
+
+  5. Example with alternative 'def' pattern:
+      ```clojure
+      ;; note: `defn-` is not included in the default exludes
+      (binding [*def-patterns* #{\"defn-\"}]
+        (print-form-then-eval \"(defn- foo [x] x)\"))
+      ;; => [:code \"(defn- foo [x] x)\"]
+      ```
+
+      Renders as…
+      ```clojure
+      (defn- foo [x] x)
       ```"
   {:UUIDv4 #uuid "39dcd66b-f919-41a2-8376-4c2364bf3c59"}
   ([str-form] (print-form-then-eval str-form *wrap-at* (/ *wrap-at* 2)))
   ([str-form width-fn width-output]
-   (let [def? (re-find #"^\((s\/)?defn?(macro)?(pred)? " str-form)
-         require? (re-find #"^\(require " str-form)
+   (let [def? (def-start? str-form *def-patterns*)
+         require? (str/starts-with? str-form "(require ")
          form (read-string str-form)
          evaled-form (eval form)
          evaled-str (revert-fn-obj-rendering (pr-str evaled-form))]
@@ -543,14 +729,14 @@ Intended to be referenced within hiccup/html section files.")
    :no-doc true}
   [opts page-body & [project-name project-description]]
   (spit (str (opts :readme-html-directory) (opts :readme-html-filename))
-        (revert-fn-obj-rendering (page-template
-                                  (str
-                                   (or (opts :project-name-formatted) project-name)
-                                   " — "
-                                   (or (opts :project-description) project-description))
-                                  (opts :readme-UUID)
-                                  (conj [:body] page-body)
-                                  (opts :copyright-holder)))))
+        (page-template
+         (str
+          (or (opts :project-name-formatted) project-name)
+          " — "
+          (or (opts :project-description) project-description))
+         (opts :readme-UUID)
+         (conj [:body] page-body)
+         (opts :copyright-holder))))
 
 
 (defn generate-readmoi-markdown
@@ -567,7 +753,6 @@ Intended to be referenced within hiccup/html section files.")
             str
             (clojure.string/replace #"</?article>" "")
             non-breaking-space-ize
-            revert-fn-obj-rendering
             #_escape-markdowners)))
 
 
@@ -616,7 +801,7 @@ Intended to be referenced within hiccup/html section files.")
 
 
 (def ^{:UUIDv4 #uuid "6a8262a1-4fac-4166-9595-b853edae34e1"
-      :no-doc true} html-head-regex #"<!DOCTYPE html>\s*<html>\s*<head>\s*<meta\s*name=\"generator\"\s*content=\"HTML Tidy for HTML5 for Linux version \d{1,2}.\d{1,2}.\d{1,2}\">\s*<title>\s*<\/title>\s*<\/head>")
+       :no-doc true} html-head-regex #"<!DOCTYPE html>\s*<html>\s*<head>\s*<meta\s*name=\"generator\"\s*content=\"HTML Tidy for HTML5 for Linux version \d{1,2}.\d{1,2}.\d{1,2}\">\s*<title>\s*<\/title>\s*<\/head>")
 
 
 (defn tidy-html-body
@@ -640,27 +825,12 @@ Intended to be referenced within hiccup/html section files.")
      (spit f
            (-> f
                slurp
-               (s/replace html-head-regex ""))))))
+               (str/replace html-head-regex ""))))))
 
 
 (defn generate-all
   "Given `project-metadata` and ReadMoi options `opt`, write-to-file html and
   markdown ReadMe.
-
-  See project documentation for details on the structure of the options map.
-  Default values are sourced from the [defaults file](https://github.com/blosavio/readmoi/blob/main/src/readmoi/readmoi_defaults.clj).
-
-  Dynamic vars that govern output formatting:
-
-  * [[*wrap-at*]]
-  * [[*separator*]]
-
-  Dynamic vars that may be referred for creating content (e.g., _Setup_
-  section):
-
-  * [[*project-group*]]
-  * [[*project-name*]]
-  * [[*project-version*]]
 
   Example:
   ```clojure
@@ -670,16 +840,19 @@ Intended to be referenced within hiccup/html section files.")
   ;; writes \"readme.html\" to \"doc\\\" directory and writes \"README.md\" to
   ;; project's root directory
   ```"
-  {:UUIDv4 #uuid "247ce1b3-6eac-40d2-bd01-c94ff9026e69"}
-  [project-metadata opt]
-  (let [options-n-defaults (merge readmoi-defaults opt)]
+  {:UUIDv4 #uuid "247ce1b3-6eac-40d2-bd01-c94ff9026e69"
+   :no-doc true}
+  [opt]
+  (let [options-n-defaults (merge readmoi-defaults opt)
+        metadata (project-metadata options-n-defaults)]
     (binding [*wrap-at* (or (options-n-defaults :wrap-at) *wrap-at*)
               *separator* (or (options-n-defaults :separator) *separator*)
               *fn-map-additions* (or (options-n-defaults :fn-map-additions) *fn-map-additions*)
-              *project-version* (nth project-metadata 2)
-              *project-group* (get-project-group-or-name project-metadata :group)
-              *project-name* (get-project-group-or-name project-metadata :name)]
-      (let [project-description (nth project-metadata 4)
+              *def-patterns* (or (options-n-defaults :def-patterns) *def-patterns*)
+              *project-version* (metadata :version)
+              *project-group* (metadata :group)
+              *project-name* (metadata :name)]
+      (let [project-description (metadata :description)
             title-section (generate-title-section (or (opt :project-name-formatted) *project-name*)
                                                   (or (opt :project-description) project-description))
             license-section (generate-license-section (options-n-defaults :license-hiccup))
@@ -697,3 +870,83 @@ Intended to be referenced within hiccup/html section files.")
             (do
               (tidy-html-document (str (options-n-defaults :readme-html-directory) (options-n-defaults :readme-html-filename)))
               (tidy-html-body (str (options-n-defaults :readme-markdown-directory) (options-n-defaults :readme-markdown-filename))))))))))
+
+
+(defn -main
+  "Generate a project ReadMe. Sources options from file `options-filename` if
+  supplied, otherwise `resources/readmoi_options.edn`.
+
+  Examples:
+  ```clojure
+  ;; generate ReadMe using options from 'resources/readmoi_options.edn'
+  (-main)
+
+  ;; generate ReadMe using options from 'other_directory/custom_readme_opt.edn'
+  (-main \"other_directory/custom_readme_opt.edn\")
+  ```
+
+  Running from the command line, there's a quirk to avoid. The `lein run`
+  pattern seems to refer *only* the `-main` function, but not any of the other
+  useful `readmoi.core` vars, such as [[print-form-then-eval]],
+  [[*project-version*]], etc.
+
+  There are two options for running from the command line:
+
+  1. If the ReadMe contains a small number of them, always write the full,
+      namespace-qualified name, e.g. `readmoi.core/print-form-then-eval`,
+      `readmoi.core/*project-version*`, etc. Then, invoke from the command line.
+
+      Default options file 'resources/readmoi_options.edn'.
+      ```bash
+      $ lein run -m readmoi.core
+      ```
+
+      Explicit options file 'other_directory/custom_readme_opt.edn'.
+      ```bash
+      $ lein run -m readmoi.core other_directory/custom_readme_opt.edn
+      ```
+
+  2. If the ReadMe contains a multitude of `readmoi.core` references, then
+    assemble a generator script similar to this:
+
+      ```clojure
+      (ns readmoi-generator
+        (:require [*project-version*
+                   -main
+                   print-form-then-eval]))
+
+      (-main)
+      ```
+
+      Invoking `-main` from inside the generator script's namespace in a
+      REPL-attached editor permits writing simple names, i.e.,
+      [[print-form-then-eval]] and [[*project-version*]], without their
+      namespace  qualifiers.
+
+      Or, from the command line, `lein run` can now refer to the needed vars
+      from `readmoi.core` because they're `require`-d by the generator script.
+
+      Default options file 'resources/readmoi_options.edn'.
+      ```bash
+      $ lein run -m readmoi-generator
+      ```
+
+      Explicit options file 'other_directory/custom_readme_opt.edn'.
+      ```bash
+      $ lein run -m readmoi-generator other_directory/custom_readme_opt.edn
+      ```"
+  [& options-filename]
+  {:UUIDv4 #uuid "60f00c64-6480-42df-9181-3048da80db73"}
+  (let [opt-fname (or (first options-filename)
+                      "resources/readmoi_options.edn")
+        opt (load-file opt-fname)]
+    (do
+      (generate-all opt)
+      (when (not *repl*)
+        (System/exit 0)))))
+
+
+(defn test-run
+  []
+  (println "`test-run` invoked"))
+

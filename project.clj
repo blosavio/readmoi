@@ -1,4 +1,4 @@
-(defproject com.sagevisuals/readmoi "4"
+(defproject com.sagevisuals/readmoi "5-SNAPSHOT2"
   :description "A Clojure library for generating a project ReadMe from hiccup/html."
   :url "https://github.com/blosavio/readmoi"
   :license {:name "MIT License"
@@ -10,10 +10,12 @@
                  [zprint "1.2.9"]]
   :repl-options {:init-ns readmoi.core}
   :plugins []
-  :profiles {:dev {:dependencies [[com.sagevisuals/chlog "1"]]
+  :profiles {:dev {:dependencies [[com.sagevisuals/chlog "2"]]
                    :plugins [[dev.weavejester/lein-cljfmt "0.12.0"]
                              [lein-codox "0.10.8"]]}
              :repl {}}
+  :aliases {"readmoi" ["run" "-m" "readmoi-generator"]
+            "chlog" ["run" "-m" "chlog-generator"]}
   :codox {:metadata {:doc/format :markdown}
           :namespaces [#"^readmoi\.(?!scratch)(?!generators)"]
           :target-path "doc"
@@ -21,6 +23,6 @@
           :doc-files []
           :source-uri "https://github.com/blosavio/readmoi/blob/main/{filepath}#L{line}"
           :html {:transforms [[:div.sidebar.primary] [:append [:ul.index-link [:li.depth-1 [:a {:href "https://github.com/blosavio/readmoi"} "Project home"]]]]]}
-          :project {:name "ReadMoi" :version "version 4"}}
+          :project {:name "ReadMoi" :version "version 5"}}
   :scm {:name "git" :url "https://github.com/blosavio/readmoi"})
 
