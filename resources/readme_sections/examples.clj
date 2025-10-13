@@ -1,7 +1,10 @@
 [:section#examples
  [:h2 "Example " [:em "ReadMoi"] " documents"]
 
- [:p "Here is some example hiccup/html that might live in a " [:em "section"] " file named " [:code "super.clj"] " in the project's " [:code "resources/readme_sections/"] " directory."]
+ [:p "Here is some example hiccup/"
+  [:span.small-caps "html"]
+  " that might live in a "
+  [:em "section"] " file named " [:code "super.clj"] " in the project's " [:code "resources/readme_sections/"] " directory."]
 
  [:pre [:code
         "[:section#super\n [:h3 \"Super Awesome Stuff\"]\n [:p \"Here's how to use \" [:code \"inc\"] \".\"]\n [:pre (print-form-then-eval \"(inc 99)\")]]"]]
@@ -20,14 +23,19 @@
 
  [:p "Notice that the " [:code ":section-href"] " value in the options map matches the hiccup " [:span.small-caps "html"] " element's id attribute. That matching allows the navigation link at the top of the ReadMe to correctly anchor to the proper section somewhere later in the ReadMe."]
 
- [:p "After running " [:code "-main"] ", that combination of hiccup/html and options would be rendered in the final ReadMe like this."]
+ [:p "After running " [:code "-main"] ", that combination of hiccup/"
+  [:span.small-caps "html"]
+  " and options would be rendered in the final ReadMe like this."]
 
  [:blockquote
   [:h4#super "Super Awesome Stuff"]
   [:p "Here's how to use " [:code "inc"] "."]
   [:pre [:code "(inc 99) ;; => 100"]]]
 
- [:p "ReadMoi consulted the options file, learned that there was a section called 'super', loaded the contents of the " [:code "super.clj"] " file, processed the hiccup/html contents of the file — which involved evaluating " [:code "(inc 99)"] " and then inserting " [:code " ;; => 100"] " — and wrote the ReadMe files."]
+ [:p "ReadMoi consulted the options file, learned that there was a section called 'super', loaded the contents of the " [:code "super.clj"] " file, processed the hiccup/"
+  [:span.small-caps "html"]
+  " contents of the file — which involved evaluating "
+  [:code "(inc 99)"] " and then inserting " [:code " ;; => 100"] " — and wrote the ReadMe files."]
 
  [:h3 "ReadMoi examples from other projects"]
 

@@ -36,15 +36,15 @@
 
    [:p "…which Hiccup compiles to…"]
 
-   [:pre [:code "&lt;pre&gt;&lt;code&gt;(+ 1 2) ;; => 3&lt;/code&gt;&lt;/pre&gt;"]]
+   [:pre [:code (raw "&lt;pre&gt;&lt;code&gt;(+ 1 2) ;; => 3&lt;/code&gt;&lt;/pre&gt;")]]
 
    [:p "…which our web browser renders as…"]
 
    [:pre (print-form-then-eval "(+ 1 2)")]
 
-   [:p "Don't bother inserting the return value. Every time we generate the document, the code is re-evaluated. We can write and re-write our code examples and quickly see how they'll appear in the document. Also, the code examples stay synchronized as the codebase changes."]
+   [:p "Don't insert the return value. Every time we generate the document, the code examples are automatically re-evaluated. We can write and re-write our code examples and quickly see how they'll appear in the document. Also, the code examples stay synchronized as the codebase changes underneath."]
 
-   [:p "Note: Any definitions (" [:code "def"] ", " [:code "defn"] ", etc.) will bind a value to a symbol in that namespace, which is useful and typically what we'd want, but can on occasion, be inconvenient."]
+   [:p "Note: Any definitions (" [:code "def"] ", " [:code "defn"] ", etc.) will bind a value to a symbol in that namespace, which is useful and typically what we'd want, but can on occasion be inconvenient."]
 
    [:p "The pretty-printing is delegated to " [:code "zprint"] ", which has a million and one options. " [:code "print-form-then-eval"] " provides about four knobs to tweak the line-breaking, which is good enough for most examples in a ReadMe document. See the " [:a {:href "https://blosavio.github.io/readmoi/index.html"} [:span.small-caps "api"] " documentation"] " for details."]]
 
@@ -76,11 +76,28 @@
 
     [:li [:p [:code ":fn-map-additions"] " Special " [:code ":fn-map"] " directives governing how zprint pretty-printer will " [:a {:href "https://cljdoc.org/d/zprint/zprint/1.2.9/doc/introduction"} "format a function expression"] ". Defaults to " [:code "{}"] "."]]
 
-    [:li [:p [:code ":license-hiccup"] " Hiccup/html forms to replace the default license (MIT license) section."]]
+    [:li [:p [:code ":license-hiccup"] " Hiccup/"
+          [:span.small-caps "html"]
+          " forms to replace the default license (MIT license) section."]]
 
-    [:li [:p [:code ":project-description"] " Alternative project description (string) to use in preference to the project description supplied by " [:code "defproject"] " in the " [:code "project.clj"] " file."]]
+    [:li [:p [:code ":project-description"] " Alternative project description (string) to use in preference to the project description supplied by "
+          [:code "defproject"] " in the "
+          [:code "project.clj"]
+          " file or the "
+          [:code "description"]
+          " entry of "
+          [:code "pom.xml"]
+          "."]]
 
-    [:li [:p [:code ":project-name-formatted"] " Alternative project name (string) to use in preference to the project name supplied by " [:code "defproject"] " in the " [:code "project.clj"] " file."]]
+    [:li [:p [:code ":project-name-formatted"] " Alternative project name (string) to use in preference to the project name supplied by "
+          [:code "defproject"]
+          " in the "
+          [:code "project.clj"]
+          " file or "
+          [:code "name"]
+          " entry of "
+          [:code "pom.xml"]
+          "."]]
 
     [:li [:p [:code ":preferred-project-metadata"] " ReadMoi attempts to
  automatically detect the project's version number from either a Leiningen "
@@ -112,13 +129,19 @@
 
     [:li [:p [:code ":wrap-at"] " Column wrap base condition for " [:a {:href "https://blosavio.github.io/readmoi/readmoi.core.html#var-print-form-then-eval"} [:code "print-form-then-eval"]] " and " [:a {:href "https://blosavio.github.io/readmoi/readmoi.core.html#var-prettyfy"}  [:code "prettyfy"]] ". Defaults to " [:code "80"] "."]]
 
-    [:li [:p [:code ":tidy-html?"] " Indent and wrap " [:span.small-caps "html"] " and markdown files. Defaults to " [:code "nil"] ". Setting this option to " [:code "true"] " may be desirable minimize the version control 'diff' from one commit to the next. Note that the tidy-ing procedure may insert line-breaks at an undesirable spot, e.g., within an in-text " [:code "[:code ...]"] " block. To keep the block on one line, use a Unicode " [:code "U+0A00"] " non-breaking space. An html non-breaking space entity, " [:code "&amp;nbsp;"] ", gets rendered literally."]]]]
+    [:li [:p [:code ":tidy-html?"] " Indent and wrap " [:span.small-caps "html"] " and markdown files. Defaults to " [:code "nil"] ". Setting this option to " [:code "true"] " may be desirable to minimize the version control 'diff' from one commit to the next. Note that the tidy-ing procedure may insert line-breaks at an undesirable spot, e.g., within an in-text " [:code "[:code ...]"] " block. To keep the block on one line, use a Unicode " [:code "U+0A00"] " non-breaking space. An "
+          [:span.small-caps "html"]
+          " non-breaking space entity, "
+          [:code (raw "&amp;nbsp;")] ;; GitHub markdown renders this literally, but plain html does not
+          ", gets rendered literally."]]]]
 
   [:li
    [:p [:strong "Generate the "
         [:span.small-caps "html"]
         " and markdown files."]
-    " We must evaluate "
+    " To get nicely formatted "
+    [:span.small-caps "html"]
+    " documents, we evaluate "
     [:code "("
      [:a {:href "https://blosavio.github.io/readmoi/readmoi.core.html#var--main"} "-main"]
      ")"]

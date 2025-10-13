@@ -108,18 +108,19 @@
           <p>
             …which Hiccup compiles to…
           </p>
-          <pre><code>&amp;lt;pre&amp;gt;&amp;lt;code&amp;gt;(+ 1 2) ;; =&gt; 3&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;</code></pre>
+          <pre><code>&lt;pre&gt;&lt;code&gt;(+ 1 2) ;; =&gt; 3&lt;/code&gt;&lt;/pre&gt;</code></pre>
           <p>
             …which our web browser renders as…
           </p>
           <pre><code>(+ 1 2) ;; =&gt; 3</code></pre>
           <p>
-            Don&apos;t bother inserting the return value. Every time we generate the document, the code is re-evaluated. We can write and re-write our code
-            examples and quickly see how they&apos;ll appear in the document. Also, the code examples stay synchronized as the codebase changes.
+            Don&apos;t insert the return value. Every time we generate the document, the code examples are automatically re-evaluated. We can write and
+            re-write our code examples and quickly see how they&apos;ll appear in the document. Also, the code examples stay synchronized as the codebase
+            changes underneath.
           </p>
           <p>
             Note: Any definitions (<code>def</code>, <code>defn</code>, etc.) will bind a value to a symbol in that namespace, which is useful and typically
-            what we&apos;d want, but can on occasion, be inconvenient.
+            what we&apos;d want, but can on occasion be inconvenient.
           </p>
           <p>
             The pretty-printing is delegated to <code>zprint</code>, which has a million and one options. <code>print-form-then-eval</code> provides about four
@@ -189,19 +190,19 @@
             </li>
             <li>
               <p>
-                <code>:license-hiccup</code> Hiccup/html forms to replace the default license (MIT license) section.
+                <code>:license-hiccup</code> Hiccup/<span class="small-caps">html</span> forms to replace the default license (MIT license) section.
               </p>
             </li>
             <li>
               <p>
                 <code>:project-description</code> Alternative project description (string) to use in preference to the project description supplied by
-                <code>defproject</code> in the <code>project.clj</code> file.
+                <code>defproject</code> in the <code>project.clj</code> file or the <code>description</code> entry of <code>pom.xml</code>.
               </p>
             </li>
             <li>
               <p>
                 <code>:project-name-formatted</code> Alternative project name (string) to use in preference to the project name supplied by
-                <code>defproject</code> in the <code>project.clj</code> file.
+                <code>defproject</code> in the <code>project.clj</code> file or <code>name</code> entry of <code>pom.xml</code>.
               </p>
             </li>
             <li>
@@ -262,19 +263,20 @@
             <li>
               <p>
                 <code>:tidy-html?</code> Indent and wrap <span class="small-caps">html</span> and markdown files. Defaults to <code>nil</code>. Setting this
-                option to <code>true</code> may be desirable minimize the version control &apos;diff&apos; from one commit to the next. Note that the tidy-ing
-                procedure may insert line-breaks at an undesirable spot, e.g., within an in-text <code>[:code ...]</code> block. To keep the block on one line,
-                use a Unicode <code>U+0A00</code> non-breaking space. An html non-breaking space entity, <code>&amp;amp;nbsp;</code>, gets rendered literally.
+                option to <code>true</code> may be desirable to minimize the version control &apos;diff&apos; from one commit to the next. Note that the
+                tidy-ing procedure may insert line-breaks at an undesirable spot, e.g., within an in-text <code>[:code ...]</code> block. To keep the block on
+                one line, use a Unicode <code>U+0A00</code> non-breaking space. An <span class="small-caps">html</span> non-breaking space entity,
+                <code>&amp;nbsp;</code>, gets rendered literally.
               </p>
             </li>
           </ul>
         </li>
         <li>
           <p>
-            <strong>Generate the <span class="small-caps">html</span> and markdown files.</strong> We must evaluate <code>(<a href=
-            "https://blosavio.github.io/readmoi/readmoi.core.html#var--main">-main</a>)</code>. The most basic way to do that is to hide it behind a
-            <code>#_</code> reader <em>ignore form</em> in one of our section <code>.clj</code> files. Then, while we&apos;re writing in our <span class=
-            "small-caps">repl</span>-attached editor, we can evaluate the form as needed.
+            <strong>Generate the <span class="small-caps">html</span> and markdown files.</strong> To get nicely formatted <span class="small-caps">html</span>
+            documents, we evaluate <code>(<a href="https://blosavio.github.io/readmoi/readmoi.core.html#var--main">-main</a>)</code>. The most basic way to do
+            that is to hide it behind a <code>#_</code> reader <em>ignore form</em> in one of our section <code>.clj</code> files. Then, while we&apos;re
+            writing in our <span class="small-caps">repl</span>-attached editor, we can evaluate the form as needed.
           </p>
           <p>
             With only slightly more effort, we could make a generator script, &nbsp;similar to <a href=
@@ -325,8 +327,8 @@
         Example <em>ReadMoi</em> documents
       </h2>
       <p>
-        Here is some example hiccup/html that might live in a <em>section</em> file named <code>super.clj</code> in the project&apos;s
-        <code>resources/readme_sections/</code> directory.
+        Here is some example hiccup/<span class="small-caps">html</span> that might live in a <em>section</em> file named <code>super.clj</code> in the
+        project&apos;s <code>resources/readme_sections/</code> directory.
       </p>
       <pre><code>[:section#super
 &nbsp;[:h3 &quot;Super Awesome Stuff&quot;]
@@ -351,7 +353,8 @@
         attribute. That matching allows the navigation link at the top of the ReadMe to correctly anchor to the proper section somewhere later in the ReadMe.
       </p>
       <p>
-        After running <code>-main</code>, that combination of hiccup/html and options would be rendered in the final ReadMe like this.
+        After running <code>-main</code>, that combination of hiccup/<span class="small-caps">html</span> and options would be rendered in the final ReadMe
+        like this.
       </p>
       <blockquote>
         <h4 id="super">
@@ -364,8 +367,8 @@
       </blockquote>
       <p>
         ReadMoi consulted the options file, learned that there was a section called &apos;super&apos;, loaded the contents of the <code>super.clj</code> file,
-        processed the hiccup/html contents of the file — which involved evaluating <code>(inc 99)</code> and then inserting <code>;; =&gt; 100</code> — and
-        wrote the ReadMe files.
+        processed the hiccup/<span class="small-caps">html</span> contents of the file — which involved evaluating <code>(inc 99)</code> and then inserting
+        <code>;; =&gt; 100</code> — and wrote the ReadMe files.
       </p>
       <h3>
         ReadMoi examples from other projects
