@@ -182,7 +182,7 @@
         2024 November 22<br>
         Brad Losavio (blosavio@sagevisuals.com)<br>
         <em>Description:</em> Normalized html and markdown outputs. Generalized page-footer, added copyright statement to markdown output file to better match
-        the html verison.<br>
+        the html version.<br>
         <em>Project status:</em> <a href="https://github.com/metosin/open-source/blob/main/project-status.md">active</a><br>
         <em>Urgency:</em> medium<br>
         <em>Breaking:</em> yes
@@ -243,7 +243,7 @@
     </section>
     <p id="page-footer">
       Copyright © 2024–2025 Brad Losavio.<br>
-      Compiled by <a href="https://github.com/blosavio/chlog">Chlog</a> on 2025 October 11.<span id="uuid"><br>
+      Compiled by <a href="https://github.com/blosavio/chlog">Chlog</a> on 2025 October 13.<span id="uuid"><br>
       aa13a964-fbe5-4347-92f5-90ba0da27bdb</span>
     </p>
   </body>

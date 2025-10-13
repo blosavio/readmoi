@@ -15,7 +15,7 @@
   * `:tidy-html?`
 
 Override default values by associating new values into the ReadMoi _options_
-hash-map. See the also the [[readmoi.core]] namespace docstring.")
+hash-map. See also the [[readmoi.core]] namespace docstring.")
 
 
 (def ^{:doc defaults-doctring

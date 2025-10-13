@@ -19,11 +19,11 @@
       <h3>
         Leiningen/Boot
       </h3>
-      <pre><code>[com.sagevisuals/readmoi &quot;5-SNAPSHOT2&quot;]</code></pre>
+      <pre><code>[com.sagevisuals/readmoi &quot;5&quot;]</code></pre>
       <h3>
         Clojure CLI/deps.edn
       </h3>
-      <pre><code>com.sagevisuals/readmoi {:mvn/version &quot;5-SNAPSHOT2&quot;}</code></pre>
+      <pre><code>com.sagevisuals/readmoi {:mvn/version &quot;5&quot;}</code></pre>
       <h3>
         Require
       </h3>
@@ -49,18 +49,17 @@
         <a href="https://github.com/weavejester/hiccup">Hiccup</a> is a wonderful utility that consumes Clojure code and outputs <span class=
         "small-caps">html</span>. All the benefits of Clojure transfer to authoring <span class="small-caps">html</span>. Code editors can sling around
         <span class="small-caps">lisp</span> forms with abandon. We have the whole Clojure universe at our disposal. And best of all, we can evaluate code
-        examples, right there in the document itself.
+        examples, right there in the document itself. But, GitHub ReadMe documents are produced from markdown files, not hiccup.
       </p>
       <p>
-        But, GitHub ReadMe documents are generated from markdown files, not hiccup. The ReadMoi library generates <span class="small-caps">html</span> and
-        markdown ReadMe files — with up-to-date, evaluated code examples — from hiccup source.
+        <strong>The ReadMoi library generates <span class="small-caps">html</span> and markdown ReadMe files — with up-to-date, evaluated code examples — from
+        hiccup source.</strong>
       </p>
       <p>
         The resulting ReadMe document is structured exactly as you see here: a Clojars badge, navigation links, one or more <span class=
         "small-caps">html</span> <code>&lt;section&gt;</code>s (<em>Intro</em>, <em>Usage</em>, <em>Glossary</em>, etc.) containing evaluated code examples, a
         license statement, and a footer with copyright and compilation metadata.
       </p>
-      <p></p>
     </section>
     <section id="usage">
       <h2>
@@ -70,27 +69,27 @@
         Overview
       </h3>
       <p>
-        We write our document, one <code>.clj</code> file per section. Each section file contains hiccup/html forms with text liberally sprinkled with code
-        examples. Then, we create an <em>options file</em> that tells ReadMoi which section files to load. The options file also contains various…options (see
-        below). Finally, we tell ReadMoi to generate the ReadMe, one markdown file and one <span class="small-caps">html</span> file. Generating the ReadMe
-        files involves processing the hiccup forms, during which the code examples are evaluated and the returned values are inserted immediately next to the
-        Clojure form.
+        We write our document, one <code>.clj</code> file per section. Each of those section files contains hiccup/html forms with text liberally sprinkled
+        with code examples. Then, we create an <em>options file</em> that tells ReadMoi which section files to load. The options file also contains
+        various…options (see <a href="#options">below</a>). Finally, we tell ReadMoi to generate the ReadMe files, one markdown file and one <span class=
+        "small-caps">html</span> file. Generating the ReadMe files involves processing the hiccup forms, during which the code examples are evaluated and the
+        returned values are inserted immediately next to the Clojure form.
       </p>
       <h3>
         Detailed usage
       </h3>
       <p>
-        The following steps assume a Leiningen <code>project.clj</code> file in the project&apos;s root directory.
+        The following steps assume a Leiningen <code>project.clj</code> file or a &nbsp;Maven <code>pom.xml</code> file in the project&apos;s root directory.
       </p>
       <ol>
         <li>
           <p>
-            Complete the <a href="#setup">setup</a>.
+            <strong>Complete the <a href="#setup">setup</a>.</strong>
           </p>
         </li>
         <li>
           <p>
-            Write our ReadMe sections. The format of each section&apos;s file is…
+            <strong>Write our ReadMe sections.</strong> The format of each section&apos;s file is…
           </p>
           <pre><code>[:section#<em>❬:section-href❭
 &nbsp; ❬hiccup content❭</em>]</code></pre>
@@ -99,16 +98,24 @@
             it finds in that map.
           </p>
           <p>
-            Also, we can show people how to <em>use</em> the software with the following pattern.
+            Also, we can show people how to <em>use</em> the software with the following pattern. In the section file, we merely write…
           </p>
-          <pre><code>[:pre [:code (print-form-then-eval &quot;(+ 1 2)&quot;)]]</code></pre>
+          <pre><code>[:pre (print-form-then-eval &quot;(+ 1 2)&quot;)]</code></pre>
           <p>
-            …which gets rendered as…
+            …which Readmoi evaluates to…
+          </p>
+          <pre><code>[:pre [:code &quot;(+ 1 2) ;; =&gt; 3&quot;]]</code></pre>
+          <p>
+            …which Hiccup compiles to…
+          </p>
+          <pre><code>&amp;lt;pre&amp;gt;&amp;lt;code&amp;gt;(+ 1 2) ;; =&gt; 3&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;</code></pre>
+          <p>
+            …which our web browser renders as…
           </p>
           <pre><code>(+ 1 2) ;; =&gt; 3</code></pre>
           <p>
-            Don&apos;t bother inserting the return value. Every time we generate the document, the code is re-evaluated. We can re-write our code examples and
-            quickly see how they&apos;ll appear in the document. Also, the code examples stay synchronized as the codebase changes.
+            Don&apos;t bother inserting the return value. Every time we generate the document, the code is re-evaluated. We can write and re-write our code
+            examples and quickly see how they&apos;ll appear in the document. Also, the code examples stay synchronized as the codebase changes.
           </p>
           <p>
             Note: Any definitions (<code>def</code>, <code>defn</code>, etc.) will bind a value to a symbol in that namespace, which is useful and typically
@@ -120,16 +127,16 @@
             "https://blosavio.github.io/readmoi/index.html"><span class="small-caps">api</span> documentation</a> for details.
           </p>
         </li>
-        <li>
+        <li id="options">
           <p>
-            Copy <a href="https://github.com/blosavio/readmoi/tree/main/resources/readmoi_options.edn"><code>readmoi_options.edn</code></a> to our
-            project&apos;s <code>resources/</code> directory.
+            <strong>Copy <a href="https://github.com/blosavio/readmoi/tree/main/resources/readmoi_options.edn"><code>readmoi_options.edn</code></a></strong> to
+            our project&apos;s <code>resources/</code> directory.
           </p>
         </li>
         <li>
           <p>
-            The <code>readmoi_options.edn</code> file assigns all the required information and declares our preferences for optional values. The map contains
-            the following <strong>required</strong> keys:
+            <strong>Adjust the copied options file.</strong> The <code>readmoi_options.edn</code> file assigns all the required information and declares our
+            preferences for optional values. The map contains the following <strong>required</strong> keys:
           </p>
           <ul>
             <li>
@@ -199,6 +206,13 @@
             </li>
             <li>
               <p>
+                <code>:preferred-project-metadata</code> ReadMoi attempts to &nbsp;automatically detect the project&apos;s version number from either a
+                Leiningen <code>project.clj</code> file or a Maven <code>pom.xml</code> file. If both exist, a preference must be declared with this option
+                &nbsp;by associating to either <code>:lein</code> or <code>:pom-xml</code>. Defaults to <code>nil</code>.
+              </p>
+            </li>
+            <li>
+              <p>
                 <code>:UUID</code> Version 4 <strong>U</strong>niversally <strong>U</strong>nique <strong>Id</strong>entifier. Suggestion: eval-and-replace
                 <code>(random-uuid)</code>. Default <code>nil</code>.
               </p>
@@ -249,33 +263,40 @@
               <p>
                 <code>:tidy-html?</code> Indent and wrap <span class="small-caps">html</span> and markdown files. Defaults to <code>nil</code>. Setting this
                 option to <code>true</code> may be desirable minimize the version control &apos;diff&apos; from one commit to the next. Note that the tidy-ing
-                procedure may insert line-breaks at an undesireable spot, e.g., within an in-text <code>[:code ...]</code> block. To keep the block on one
-                line, use a Unicode <code>U+0A00</code> non-breaking space. An html non-breaking space entity, <code>&amp;nbsp;</code>, gets rendered
-                literally.
+                procedure may insert line-breaks at an undesirable spot, e.g., within an in-text <code>[:code ...]</code> block. To keep the block on one line,
+                use a Unicode <code>U+0A00</code> non-breaking space. An html non-breaking space entity, <code>&amp;amp;nbsp;</code>, gets rendered literally.
               </p>
             </li>
           </ul>
         </li>
         <li>
           <p>
-            Generate the <span class="small-caps">html</span> and markdown files. We could evaluate…
+            <strong>Generate the <span class="small-caps">html</span> and markdown files.</strong> We must evaluate <code>(<a href=
+            "https://blosavio.github.io/readmoi/readmoi.core.html#var--main">-main</a>)</code>. The most basic way to do that is to hide it behind a
+            <code>#_</code> reader <em>ignore form</em> in one of our section <code>.clj</code> files. Then, while we&apos;re writing in our <span class=
+            "small-caps">repl</span>-attached editor, we can evaluate the form as needed.
           </p>
-          <pre><code>(generate-all (read-string (slurp &quot;project.clj&quot;))
-&nbsp;             (load-file &quot;resources/readmoi_options.edn&quot;))</code></pre>
           <p>
-            …in whatever namespace we loaded <code>generate-all</code>. Or, we could copy <a href=
-            "https://github.com/blosavio/readmoi/tree/main/resources/readmoi_generator.clj"><code>resources/readmoi_generator.clj</code></a> and evaluate all
-            forms in the namespace (<span class="small-caps">cider</span> command <code>C-c C-k</code>). Some day, I&apos;ll make this a command line tool or a
-            <a href="https://wiki.leiningen.org/Plugins">Leiningen plugin</a>.
+            With only slightly more effort, we could make a generator script, &nbsp;similar to <a href=
+            "https://github.com/blosavio/readmoi/tree/main/resources/readmoi_generator.clj"><code>resources/readmoi_generator.clj</code></a>. Making such a
+            script allows us require additional functions from other &nbsp;namespaces that ought not be visible in our text.
           </p>
+          <p>
+            With that generator script in hand, we could further streamline this &nbsp;step by creating a Leiningen alias in our <code>project.clj</code> file.
+          </p>
+          <pre><code>:aliases {&quot;readmoi&quot; [&quot;run&quot; &quot;-m&quot; &quot;readmoi-generator&quot;]}</code></pre>
+          <p>
+            Then, generating the documents from the command line is merely this.
+          </p>
+          <pre><code>$ lein readmoi</code></pre>
           <p>
             ReadMoi produces two files. The first is a &apos;markdown&apos; file that&apos;s actually plain old <span class="small-caps">html</span>, abusing
             the fact that <span class="small-caps">html</span> passes through the markdown converter. By default, this markdown file is written to the
             project&apos;s root directory where GitHub can find and display the ReadMe. We don&apos;t need a dedicated markdown converter to view this file;
-            copy it to a <a href="https://gist.github.com/">GitHub gist</a> and it&apos;ll display similarly to when we view it on GitHub. The second file, by
-            default written to the <code>resources/</code> directory, is a proper <span class="small-caps">html</span> document with a
+            copy it to a <a href="https://gist.github.com/">GitHub gist</a> and it&apos;ll display similarly to when we view it on GitHub. The second file — by
+            default written to the <code>resources/</code> directory — is a proper <span class="small-caps">html</span> document with a
             <code>&lt;head&gt;</code>, etc., that is viewable in any browser. We may want to copy over the <a href=
-            "https://github.com/blosavio/readmoi/blob/main/doc/project.css">css file</a> for some minimal styling.
+            "https://github.com/blosavio/readmoi/blob/main/doc/project.css">css file</a> for some lightweight styling.
           </p>
         </li>
       </ol>
@@ -310,10 +331,11 @@
       <pre><code>[:section#super
 &nbsp;[:h3 &quot;Super Awesome Stuff&quot;]
 &nbsp;[:p &quot;Here&apos;s how to use &quot; [:code &quot;inc&quot;] &quot;.&quot;]
-&nbsp;[:pre [:code (print-form-then-eval &quot;(inc 99)&quot;)]]]</code></pre>
+&nbsp;[:pre (print-form-then-eval &quot;(inc 99)&quot;)]]</code></pre>
       <p>
         Notice that we didn&apos;t include the <code>100</code> yielded by evaluating <code>(inc 99)</code>. During hiccup processing,
-        <code>print-form-then-eval</code> will do that for us, including inserting a separator.
+        <code>print-form-then-eval</code> will do that for us, including inserting a <a href=
+        "https://blosavio.github.io/readmoi/readmoi.core.html#var-*separator*">separator</a>.
       </p>
       <p>
         Hiccup extracts id attributes from the thing following an <span class="small-caps">html</span> element&apos;s <code>#</code>. In this example, the
@@ -326,10 +348,10 @@
 &nbsp;            :section-href &quot;super&quot;]}</code></pre>
       <p>
         Notice that the <code>:section-href</code> value in the options map matches the hiccup <span class="small-caps">html</span> element&apos;s id
-        attribute. That matching allows the navigation link at the top of the ReadMe to correctly link to the proper section somewhere later in the ReadMe.
+        attribute. That matching allows the navigation link at the top of the ReadMe to correctly anchor to the proper section somewhere later in the ReadMe.
       </p>
       <p>
-        After running <code>generate-all</code>, that combination of hiccup/html and options would be rendered in the final ReadMe like this.
+        After running <code>-main</code>, that combination of hiccup/html and options would be rendered in the final ReadMe like this.
       </p>
       <blockquote>
         <h4 id="super">
@@ -349,10 +371,13 @@
         ReadMoi examples from other projects
       </h3>
       <p>
-        <a href="https://github.com/blosavio/speculoos">Speculoos</a>: A data validation library.
+        <a href="https://github.com/blosavio/speculoos">Speculoos</a>: A data validation library. Lengthy and complex.
       </p>
       <p>
-        <a href="https://github.com/blosavio/fn-in"><code>fn-in</code></a>: A data structure handling library.
+        <a href="https://github.com/blosavio/fn-in"><code>fn-in</code></a>: A data structure handling library. Lots of example evaluations.
+      </p>
+      <p>
+        <a href="https://github.com/blosavio/trlisp">trlisp</a>: Example of a project that is only Clojure-adjacent.
       </p>
     </section>
     <section id="glossary">
@@ -388,7 +413,7 @@
     <p></p>
     <p id="page-footer">
       Copyright © 2024–2025 Brad Losavio.<br>
-      Compiled by <a href="https://github.com/blosavio/readmoi">ReadMoi</a> on 2025 October 11.<span id="uuid"><br>
+      Compiled by <a href="https://github.com/blosavio/readmoi">ReadMoi</a> on 2025 October 13.<span id="uuid"><br>
       e0d63371-4eb7-4431-a5f1-1cf0f5c46a72</span>
     </p>
   </body>

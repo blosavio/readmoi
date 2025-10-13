@@ -5,7 +5,7 @@
                :email "blosavio@sagevisuals.com"}
  :version 1
  :comment "Normalized html and markdown outputs. Generalized page-footer, added
- copyright statement to markdown output file to better match the html verison."
+ copyright statement to markdown output file to better match the html version."
  :project-status :active
  :stable false
  :urgency :medium
