@@ -129,6 +129,19 @@
 
     [:li [:p [:code ":wrap-at"] " Column wrap base condition for " [:a {:href "https://blosavio.github.io/readmoi/readmoi.core.html#var-print-form-then-eval"} [:code "print-form-then-eval"]] " and " [:a {:href "https://blosavio.github.io/readmoi/readmoi.core.html#var-prettyfy"}  [:code "prettyfy"]] ". Defaults to " [:code "80"] "."]]
 
+    [:li [:p [:code ":def-patterns"]
+          " The return values of a definition are not terribly informative. By
+ default, ReadMoi suppresses the return values of "
+          [:code "def"]
+          ", "
+          [:code "defn"]
+          ", and "
+          [:code "defmacro"]
+          ". Associating a set containing strings to "
+          [:code ":def-patterns"]
+          " supercedes the default set. An empty set causes the return values of
+ all definitions to be printed."]]
+
     [:li [:p [:code ":tidy-html?"] " Indent and wrap " [:span.small-caps "html"] " and markdown files. Defaults to " [:code "nil"] ". Setting this option to " [:code "true"] " may be desirable to minimize the version control 'diff' from one commit to the next. Note that the tidy-ing procedure may insert line-breaks at an undesirable spot, e.g., within an in-text " [:code "[:code ...]"] " block. To keep the block on one line, use a Unicode " [:code "U+0A00"] " non-breaking space. An "
           [:span.small-caps "html"]
           " non-breaking space entity, "

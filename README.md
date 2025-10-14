@@ -262,6 +262,13 @@
             </li>
             <li>
               <p>
+                <code>:def-patterns</code> The return values of a definition are not terribly informative. By &nbsp;default, ReadMoi suppresses the return
+                values of <code>def</code>, <code>defn</code>, and <code>defmacro</code>. Associating a set containing strings to <code>:def-patterns</code>
+                supercedes the default set. An empty set causes the return values of &nbsp;all definitions to be printed.
+              </p>
+            </li>
+            <li>
+              <p>
                 <code>:tidy-html?</code> Indent and wrap <span class="small-caps">html</span> and markdown files. Defaults to <code>nil</code>. Setting this
                 option to <code>true</code> may be desirable to minimize the version control &apos;diff&apos; from one commit to the next. Note that the
                 tidy-ing procedure may insert line-breaks at an undesirable spot, e.g., within an in-text <code>[:code ...]</code> block. To keep the block on
@@ -416,7 +423,7 @@
     <p></p>
     <p id="page-footer">
       Copyright © 2024–2025 Brad Losavio.<br>
-      Compiled by <a href="https://github.com/blosavio/readmoi">ReadMoi</a> on 2025 October 13.<span id="uuid"><br>
+      Compiled by <a href="https://github.com/blosavio/readmoi">ReadMoi</a> on 2025 October 14.<span id="uuid"><br>
       e0d63371-4eb7-4431-a5f1-1cf0f5c46a72</span>
     </p>
   </body>

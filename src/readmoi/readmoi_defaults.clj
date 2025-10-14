@@ -5,9 +5,6 @@
   * `:clojars-badge`
   * `:license-hiccup`
   * `:sections-directory`
-  * `:project-group`
-  * `:project-name`
-  * `:project-version`
   * `:readme-html-directory`
   * `:readme-html-filename`
   * `:readme-markdown-directory`
@@ -32,10 +29,6 @@ hash-map. See also the [[readmoi.core]] namespace docstring.")
    :readme-markdown-filename "README.md"
 
    :sections-directory "resources/readme_sections/"
-
-   :project-group ""
-   :project-name ""
-   :project-version nil
 
    :tidy-html? false})
 

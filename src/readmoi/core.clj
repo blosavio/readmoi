@@ -19,6 +19,7 @@
   * `:license-hiccup`
   * `:project-description`
   * `:project-name-formatted`
+  * `:preferred-project-metadata`
   * `:readme-UUID`
   * `:readme-html-directory`
   * `:readme-html-filename`
@@ -27,6 +28,7 @@
   * `:sections-directory`
   * `:separator`
   * `:wrap-at`
+  * `:def-patterns`
 
   Default values are sourced from the
   [defaults file](https://github.com/blosavio/readmoi/blob/main/src/readmoi/readmoi_defaults.clj).
@@ -383,7 +385,7 @@ Intended to be referenced within hiccup/html section files.")
   `str-form`, separator `sep` (default `' => '`), and evaluated value.
 
   `def`, `defn`, `defmacro`, and `require` expressions are only evaled; their
-  output is not captured. These exclusions may be adjusted by  associating a new
+  output is not printed. These exclusions may be adjusted by associating a new
   (possibly empty) set of strings to option `:def-patterns`, or by binding
   `*def-patterns*`.
 
