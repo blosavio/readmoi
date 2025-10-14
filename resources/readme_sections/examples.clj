@@ -39,9 +39,19 @@
 
  [:h3 "ReadMoi examples from other projects"]
 
- [:p [:a {:href "https://github.com/blosavio/speculoos"} "Speculoos"] ": A data validation library. Lengthy and complex."]
+ [:p [:a {:href "https://github.com/blosavio/speculoos"} "Speculoos"] ": A data validation library. Lots of "
+  [:a {:href "https://github.com/blosavio/speculoos/blob/main/resources/readmoi_options.edn"} "sections"]
+  ", "
+  [:a {:href "https://github.com/blosavio/speculoos?tab=readme-ov-file#--------function-naming-conventions------"} "tables"]
+  ", "
+  [:a {:href "https://github.com/blosavio/speculoos?tab=readme-ov-file#--------troubleshooting------"}
+   [:span [:span.small-caps "html"]
+    " lists"]]
+  ", etc."]
 
- [:p [:a {:href "https://github.com/blosavio/fn-in"} [:code "fn-in"]] ": A data structure handling library. Lots of example evaluations."]
+ [:p [:a {:href "https://github.com/blosavio/fn-in"} [:code "fn-in"]] ": A data structure handling library. Lots of "
+  [:a {:href "https://github.com/blosavio/fn-in?tab=readme-ov-file#--------examples------"} "example"]
+  " evaluations."]
 
  [:p [:a {:href "https://github.com/blosavio/trlisp"} "trlisp"] ": Example of a project that is only Clojure-adjacent."]]
 

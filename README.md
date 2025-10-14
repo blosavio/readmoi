@@ -381,10 +381,15 @@
         ReadMoi examples from other projects
       </h3>
       <p>
-        <a href="https://github.com/blosavio/speculoos">Speculoos</a>: A data validation library. Lengthy and complex.
+        <a href="https://github.com/blosavio/speculoos">Speculoos</a>: A data validation library. Lots of <a href=
+        "https://github.com/blosavio/speculoos/blob/main/resources/readmoi_options.edn">sections</a>, <a href=
+        "https://github.com/blosavio/speculoos?tab=readme-ov-file#--------function-naming-conventions------">tables</a>, <a href=
+        "https://github.com/blosavio/speculoos?tab=readme-ov-file#--------troubleshooting------"><span><span class="small-caps">html</span> lists</span></a>,
+        etc.
       </p>
       <p>
-        <a href="https://github.com/blosavio/fn-in"><code>fn-in</code></a>: A data structure handling library. Lots of example evaluations.
+        <a href="https://github.com/blosavio/fn-in"><code>fn-in</code></a>: A data structure handling library. Lots of <a href=
+        "https://github.com/blosavio/fn-in?tab=readme-ov-file#--------examples------">example</a> evaluations.
       </p>
       <p>
         <a href="https://github.com/blosavio/trlisp">trlisp</a>: Example of a project that is only Clojure-adjacent.
