@@ -116,23 +116,17 @@
 (deftest cli-fn-obj-regex-tests
   (testing "basic forms"
     (are [x y] ( = x y)
-      "pos-int?" (second (re-find cli-fn-obj-regex "#object[clojure.core/pos-int? 0x69f9ab8a \"clojure.core/pos-int?@69f9ab8a\"]"))
-      "prettyfy" (second (re-find cli-fn-obj-regex "#object[readmoi.core/prettyfy 0x9fb4031 \"readmoi.core/prettyfy@9fb4031\"]"))
-      "foo"      (second (re-find cli-fn-obj-regex "#object[an-ns/foo 0x9fb4031 \"an-ns/foo@9fb4031\"]"))
-      "baz"      (second (re-find cli-fn-obj-regex "#object[nodot/baz 0x9fb4031 \"nodot/baz@9fb4031\"]"))))
+      "pos-int?" (clojure.main/demunge (second (re-find cli-fn-obj-regex "#object[clojure.core$pos_int_QMARK_ 0x69f9ab8a \"clojure.core$pos_int_QMARK_@69f9ab8a\"]")))
+      "prettyfy" (clojure.main/demunge (second (re-find cli-fn-obj-regex "#object[readmoi.core$prettyfy 0x9fb4031 \"readmoi.core$prettyfy@9fb4031\"]")))
+      "foo"      (clojure.main/demunge (second (re-find cli-fn-obj-regex "#object[an_ns$foo 0x9fb4031 \"an_ns$foo@9fb4031\"]")))
+      "baz"      (clojure.main/demunge (second (re-find cli-fn-obj-regex "#object[nodot$baz 0x9fb4031 \"nodot$baz@9fb4031\"]")))))
 
   (testing "interspersed newlines"
     (are [x] (= x "foo-bar")
-      (second (re-find cli-fn-obj-regex "#object[an-ns.sub-ns/foo-bar\n  0x9fb4031 \"readmoi.core/dm@9fb4031\"]"))
-      (second (re-find cli-fn-obj-regex "#object[an-ns.sub-ns/foo-bar 0x9fb4031\n  \"readmoi.core/dm@9fb4031\"]"))
-      (second (re-find cli-fn-obj-regex "#object\n[an-ns.sub-ns/foo-bar 0x9fb4031 \"readmoi.core/dm@9fb4031\"]"))
-      (second (re-find cli-fn-obj-regex "#object [an-ns.sub-ns/foo-bar 0x9fb4031 \"readmoi.core/dm@9fb4031\"]"))))
-
-  (testing "problematic trailing `--\\d\\d\\d\\d`"
-    (are [x y] (= x y)
-      "string?" (second (re-find cli-fn-obj-regex "#object[clojure.core/string?--5494 0x7b02e036 \"clojure.core/string?--5494@7b02e036\"]"))
-      "vector?" (second (re-find cli-fn-obj-regex "#object[clojure.core/vector?--5498 0x570b21e0 \"clojure.core/vector?--5498@570b21e0\"]"))
-      "map?"    (second (re-find cli-fn-obj-regex "#object[clojure.core/map?--5496 0x236f3885 \"clojure.core/map?--5496@236f3885\"]")))))
+      (clojure.main/demunge (second (re-find cli-fn-obj-regex "#object[an_ns.sub_ns$foo_bar\n  0x9fb4031 \"readmoi.core$dm@9fb4031\"]")))
+      (clojure.main/demunge (second (re-find cli-fn-obj-regex "#object[an_ns.sub_ns$foo_bar 0x9fb4031\n  \"readmoi.core$dm@9fb4031\"]")))
+      (clojure.main/demunge (second (re-find cli-fn-obj-regex "#object\n[an_ns.sub_ns$foo_bar 0x9fb4031 \"readmoi.core$dm@9fb4031\"]")))
+      (clojure.main/demunge (second (re-find cli-fn-obj-regex "#object [an_ns.sub_ns$foo_bar 0x9fb4031 \"readmoi.core$dm@9fb4031\"]"))))))
 
 
 (deftest revert-fn-obj-rendering-repl-tests
@@ -193,68 +187,76 @@
       "="                (revert-fn-obj-rendering-repl "#function\n;;                        [clojure.core/=]")))
   (testing "embedded in another string"
     (are [x y] (= x y)
-      "ABCint?DEF" (revert-fn-obj-rendering-repl "ABC#function[clojure.core/int?]DEF"))))
+      "ABCint?DEF" (revert-fn-obj-rendering-repl "ABC#function[clojure.core/int?]DEF")))
+  (testing "pass-through"
+    (are [x] (= x (revert-fn-obj-rendering-repl x))
+      "underscores_should_pass_through"
+      "^regexTrailingDollarSign$")))
 
 
 (deftest revert-fn-obj-rendering-cli-tests
   (testing "basic function forms"
     (are [x y] (= x y)
-      "int?" (revert-fn-obj-rendering-cli "#object[clojure.core/int? 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "string?" (revert-fn-obj-rendering-cli "#object[clojure.core/string?--5494 0x7b02e036 \"clojure.core/string?--5494@7b02e036\"]")
-      "symbol?" (revert-fn-obj-rendering-cli "#object[clojure.core/symbol? 0x1968a49c \"clojure.core/symbol?@1968a49c\"]")
-      "pos-int?" (revert-fn-obj-rendering-cli "#object[clojure.core/pos-int? 0x5cd5fb8b \"clojure.core/pos-int?@5cd5fb8b\"]")
-      "zero?" (revert-fn-obj-rendering-cli "#object[clojure.core/zero? 0x7ca3e595 \"clojure.core/zero?@7ca3e595\"]")
-      "keyword?" (revert-fn-obj-rendering-cli "#object[clojure.core/keyword? 0x518a9c8a \"clojure.core/keyword?@518a9c8a\"]")
-      "ratio?" (revert-fn-obj-rendering-cli "#object[clojure.core/ratio? 0x31f9cb3a \"clojure.core/ratio?@31f9cb3a\"]")
-      "decimal?" (revert-fn-obj-rendering-cli "#object[clojure.core/decimal? 0x1756c8aa \"clojure.core/decimal?@1756c8aa\"]")
-      "vector?" (revert-fn-obj-rendering-cli "#object[clojure.core/vector?--5498 0x12fb67f6 \"clojure.core/vector?--5498@12fb67f6\"]")
-      "map?" (revert-fn-obj-rendering-cli "#object[clojure.core/map?--5496 0x23119bc3 \"clojure.core/map?--5496@23119bc3\"]")
-      "set?" (revert-fn-obj-rendering-cli "#object[clojure.core/set? 0x12c448c \"clojure.core/set?@12c448c\"]")
-      "list?" (revert-fn-obj-rendering-cli "#object[clojure.core/list? 0x728ce413 \"clojure.core/list?@728ce413\"]")
-      "coll?" (revert-fn-obj-rendering-cli "#object[clojure.core/coll? 0x1eff0d64 \"clojure.core/coll?@1eff0d64\"]")
-      "+" (revert-fn-obj-rendering-cli "#object[clojure.core/+ 0x4919cfcf \"clojure.core/+@4919cfcf\"]")
-      "-" (revert-fn-obj-rendering-cli "#object[clojure.core/- 0x73d0d431 \"clojure.core/-@73d0d431\"]")
-      "<" (revert-fn-obj-rendering-cli "#object[clojure.core/< 0x286dba42 \"clojure.core/<@286dba42\"]")
-      ">" (revert-fn-obj-rendering-cli "#object[clojure.core/> 0x5bb34437 \"clojure.core/>@5bb34437\"]")
-      "+'" (revert-fn-obj-rendering-cli "#object[clojure.core/+' 0x5afe1da5 \"clojure.core/+'@5afe1da5\"]")
-      "inc'" (revert-fn-obj-rendering-cli "#object[clojure.core/inc' 0xeebbe46 \"clojure.core/inc'@eebbe46\"]")
-      "<=" (revert-fn-obj-rendering-cli "#object[clojure.core/<= 0x1bb425e4 \"clojure.core/<=@1bb425e4\"]")
-      "list*" (revert-fn-obj-rendering-cli "#object[clojure.core/list* 0x4184d960 \"clojure.core/list*@4184d960\"]")
-      "macroexpand-1" (revert-fn-obj-rendering-cli "#object[clojure.core/macroexpand-1 0x225bc6d6 \"clojure.core/macroexpand-1@225bc6d6\"]")
-      "pop!" (revert-fn-obj-rendering-cli "#object[clojure.core/pop! 0x253ab1d3 \"clojure.core/pop!@253ab1d3\"]")
-      "tap>" (revert-fn-obj-rendering-cli "#object[clojure.core/tap> 0x13428b9d \"clojure.core/tap>@13428b9d\"]")
-      "sorted-set-by" (revert-fn-obj-rendering-cli "#object[clojure.core/sorted-set-by 0x30be0857 \"clojure.core/sorted-set-by@30be0857\"]")
-      "compare-and-set!" (revert-fn-obj-rendering-cli "#object[clojure.core/compare-and-set! 0x44697322 \"clojure.core/compare-and-set!@44697322\"]")))
-  (testing "additoinal function forms"
+      "int?" (revert-fn-obj-rendering-cli "#object[clojure.core$int_QMARK_ 0x40dac99d \"clojure.core$int_QMARK_@40dac99d\"]")
+      "string?" (revert-fn-obj-rendering-cli "#object[clojure.core$string_QMARK___5494 0x4d4d48a6 \"clojure.core$string_QMARK___5494@4d4d48a6\"]")
+      "symbol?" (revert-fn-obj-rendering-cli "#object[clojure.core$symbol_QMARK_ 0x3c1e3314 \"clojure.core$symbol_QMARK_@3c1e3314\"]")
+      "pos-int?" (revert-fn-obj-rendering-cli "#object[clojure.core$pos_int_QMARK_ 0x39e79429 \"clojure.core$pos_int_QMARK_@39e79429\"]")
+      "zero?" (revert-fn-obj-rendering-cli "#object[clojure.core$zero_QMARK_ 0x6afa82fe \"clojure.core$zero_QMARK_@6afa82fe\"]")
+      "keyword?" (revert-fn-obj-rendering-cli "#object[clojure.core$keyword_QMARK_ 0x797b2044 \"clojure.core$keyword_QMARK_@797b2044\"]")
+      "ratio?" (revert-fn-obj-rendering-cli "#object[clojure.core$ratio_QMARK_ 0x7b1c2bf7 \"clojure.core$ratio_QMARK_@7b1c2bf7\"]")
+      "decimal?" (revert-fn-obj-rendering-cli "#object[clojure.core$decimal_QMARK_ 0x62edd125 \"clojure.core$decimal_QMARK_@62edd125\"]")
+      "vector?" (revert-fn-obj-rendering-cli "#object[clojure.core$vector_QMARK___5498 0x4025832d \"clojure.core$vector_QMARK___5498@4025832d\"]")
+      "map?" (revert-fn-obj-rendering-cli "#object[clojure.core$map_QMARK___5496 0x4ebb7bab \"clojure.core$map_QMARK___5496@4ebb7bab\"]")
+      "set?" (revert-fn-obj-rendering-cli "#object[clojure.core$set_QMARK_ 0x131b7eb9 \"clojure.core$set_QMARK_@131b7eb9\"]")
+      "list?" (revert-fn-obj-rendering-cli "#object[clojure.core$list_QMARK_ 0x651665e5 \"clojure.core$list_QMARK_@651665e5\"]")
+      "coll?" (revert-fn-obj-rendering-cli "#object[clojure.core$coll_QMARK_ 0x7f04de97 \"clojure.core$coll_QMARK_@7f04de97\"]")
+      "+" (revert-fn-obj-rendering-cli "#object[clojure.core$_PLUS_ 0xbda763e \"clojure.core$_PLUS_@bda763e\"]")
+      "-" (revert-fn-obj-rendering-cli "#object[clojure.core$_ 0x35cca8bd \"clojure.core$_@35cca8bd\"]")
+      "<" (revert-fn-obj-rendering-cli "#object[clojure.core$_LT_ 0xb27b17d \"clojure.core$_LT_@b27b17d\"]")
+      ">" (revert-fn-obj-rendering-cli "#object[clojure.core$_GT_ 0x5eac0402 \"clojure.core$_GT_@5eac0402\"]")
+      "+'" (revert-fn-obj-rendering-cli "#object[clojure.core$_PLUS__SINGLEQUOTE_ 0x630d4b50 \"clojure.core$_PLUS__SINGLEQUOTE_@630d4b50\"]")
+      "inc'" (revert-fn-obj-rendering-cli "#object[clojure.core$inc_SINGLEQUOTE_ 0x7d8b1735 \"clojure.core$inc_SINGLEQUOTE_@7d8b1735\"]")
+      "<=" (revert-fn-obj-rendering-cli "#object[clojure.core$_LT__EQ_ 0x1c0c23f7 \"clojure.core$_LT__EQ_@1c0c23f7\"]")
+      "list*" (revert-fn-obj-rendering-cli "#object[clojure.core$list_STAR_ 0x36971bef \"clojure.core$list_STAR_@36971bef\"]")
+      "macroexpand-1" (revert-fn-obj-rendering-cli "#object[clojure.core$macroexpand_1 0x4bc5b2cf \"clojure.core$macroexpand_1@4bc5b2cf\"]")
+      "pop!" (revert-fn-obj-rendering-cli "#object[clojure.core$pop_BANG_ 0x52b4071c \"clojure.core$pop_BANG_@52b4071c\"]")
+      "tap>" (revert-fn-obj-rendering-cli "#object[clojure.core$tap_GT_ 0x5b26d717 \"clojure.core$tap_GT_@5b26d717\"]")
+      "sorted-set-by" (revert-fn-obj-rendering-cli "#object[clojure.core$sorted_set_by 0x645f3895 \"clojure.core$sorted_set_by@645f3895\"]")
+      "compare-and-set!" (revert-fn-obj-rendering-cli "#object[clojure.core$compare_and_set_BANG_ 0x2e554aeb \"clojure.core$compare_and_set_BANG_@2e554aeb\"]")))
+  (testing "additional function forms"
     (are [x y] (= x y)
-      "foo" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo 0x7e13b83c \"readmoi.another-namespace/foo@7e13b83c\"]")
-      "foo-bar" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo-bar 0x775b68a8 \"readmoi.another-namespace/foo-bar@775b68a8\"]")
-      "foo-bar-baz" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo-bar-baz 0x55023ead \"readmoi.another-namespace/foo-bar-baz@55023ead\"]")
-      "foo?" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo? 0x5ec3661f \"readmoi.another-namespace/foo?@5ec3661f\"]")
-      "foo-bar?" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo-bar? 0x1bbff5ba \"readmoi.another-namespace/foo-bar?@1bbff5ba\"]")
-      "foo-bar-baz?" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo-bar-baz? 0x4daaad61 \"readmoi.another-namespace/foo-bar-baz?@4daaad61\"]")
-      "foo?-bar" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo?-bar 0x5c92147c \"readmoi.another-namespace/foo?-bar@5c92147c\"]")
-      "foo-bar?-baz" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo-bar?-baz 0x5bf9924a \"readmoi.another-namespace/foo-bar?-baz@5bf9924a\"]")
-      "foo+" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo+ 0x636b198 \"readmoi.another-namespace/foo+@636b198\"]")
-      "foo+bar" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo+bar 0x636aef2e \"readmoi.another-namespace/foo+bar@636aef2e\"]")
-      "foo+bar+baz" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo+bar+baz 0x47198a64 \"readmoi.another-namespace/foo+bar+baz@47198a64\"]")
-      "foo-2" (revert-fn-obj-rendering-cli "#object[readmoi.another-namespace/foo-2 0x5b2897d7 \"readmoi.another-namespace/foo-2@5b2897d7\"]")))
+      "foo" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo 0x53ae8844 \"readmoi.another_namespace$foo@53ae8844\"]")
+      "foo-bar" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_bar 0x7e1b80d3 \"readmoi.another_namespace$foo_bar@7e1b80d3\"]")
+      "foo-bar-baz" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_bar_baz 0x40c29d65 \"readmoi.another_namespace$foo_bar_baz@40c29d65\"]")
+      "foo?" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_QMARK_ 0x6de41f86 \"readmoi.another_namespace$foo_QMARK_@6de41f86\"]")
+      "foo-bar?" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_bar_QMARK_ 0x635763d4 \"readmoi.another_namespace$foo_bar_QMARK_@635763d4\"]")
+      "foo-bar-baz?" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_bar_baz_QMARK_ 0x1235aa76 \"readmoi.another_namespace$foo_bar_baz_QMARK_@1235aa76\"]")
+      "foo?-bar" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_QMARK__bar 0x62b81449 \"readmoi.another_namespace$foo_QMARK__bar@62b81449\"]")
+      "foo-bar?-baz" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_bar_QMARK__baz 0x108f7999 \"readmoi.another_namespace$foo_bar_QMARK__baz@108f7999\"]")
+      "foo+" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_PLUS_ 0x2857f172 \"readmoi.another_namespace$foo_PLUS_@2857f172\"]")
+      "foo+bar" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_PLUS_bar 0x341a25da \"readmoi.another_namespace$foo_PLUS_bar@341a25da\"]")
+      "foo+bar+baz" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_PLUS_bar_PLUS_baz 0x283b462d \"readmoi.another_namespace$foo_PLUS_bar_PLUS_baz@283b462d\"]")
+      "foo-2" (revert-fn-obj-rendering-cli "#object[readmoi.another_namespace$foo_2 0x446833f7 \"readmoi.another_namespace$foo_2@446833f7\"]")))
   (testing "interpersed spaces and newlines"
     (are [x y] (= x y)
-      "int?" (revert-fn-obj-rendering-cli "#object[clojure.core/int? 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "int?" (revert-fn-obj-rendering-cli "#object [clojure.core/int? 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "int?" (revert-fn-obj-rendering-cli "#object[clojure.core/int?--1234 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "int?" (revert-fn-obj-rendering-cli "#object [clojure.core/int?--1234 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "int" (revert-fn-obj-rendering-cli "#object [clojure.core/int--1234 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "validate-fn-with" (revert-fn-obj-rendering-cli "#object[project.function-specs/validate-fn-with 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "validate-fn-with" (revert-fn-obj-rendering-cli "#object [project.function-specs/validate-fn-with 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "reversed?" (revert-fn-obj-rendering-cli "#object ;;\n[project-readme-generator/reversed? 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "reversed?" (revert-fn-obj-rendering-cli "#object\n;;[project-readme-generator/reversed? 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "reversed?" (revert-fn-obj-rendering-cli "#object\n  ;;                  [project-project-readme-generator/reversed? 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")
-      "=" (revert-fn-obj-rendering-cli "#object\n;;                             [clojure.core/= 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]")))
+      "int?" (revert-fn-obj-rendering-cli "#object[clojure.core$int_QMARK_ 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "int?" (revert-fn-obj-rendering-cli "#object [clojure.core$int_QMARK_ 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "int?" (revert-fn-obj-rendering-cli "#object[clojure.core$int_QMARK_--1234 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "int?" (revert-fn-obj-rendering-cli "#object [clojure.core$int_QMARK_--1234 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "int" (revert-fn-obj-rendering-cli "#object [clojure.core$int__1234 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "validate-fn-with" (revert-fn-obj-rendering-cli "#object[project.function_specs$validate_fn_with 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "validate-fn-with" (revert-fn-obj-rendering-cli "#object [project.function_specs$validate_fn_with 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "reversed?" (revert-fn-obj-rendering-cli "#object ;;\n[project_readme_generator$reversed_QMARK_ 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "reversed?" (revert-fn-obj-rendering-cli "#object\n;;[project_readme_generator$reversed_QMARK_ 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "reversed?" (revert-fn-obj-rendering-cli "#object\n  ;;                  [project_project_readme_generator$reversed_QMARK_ 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")
+      "=" (revert-fn-obj-rendering-cli "#object\n;;                             [clojure.core$_EQ_ 0x2ba1bed1 \"clojure.core$int_QMARK_@2ba1bed1\"]")))
   (testing "embedded in another string"
     (are [x y] (= x y)
-      "ABCint?DEF" (revert-fn-obj-rendering-cli "ABC#object[clojure.core/int? 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]DEF"))))
+      "ABCint?DEF" (revert-fn-obj-rendering-cli "ABC#object[clojure.core$int_QMARK_ 0x2ba1bed1 \"clojure.core/int?@2ba1bed1\"]DEF")))
+  (testing "pass-through"
+    (are [x] (= x (revert-fn-obj-rendering-cli x))
+      "underscores_should_pass_through"
+      "^regexTrailingDollarSign$")))
 
 
 (deftest revert-fn-obj-rendering-tests
@@ -336,7 +338,8 @@
 
 
 (defn- standard-fn-renderings
-  "Generate example function object renderings clojure built-ins."
+  "Generate example function object renderings clojure built-ins. Useful for
+  copy-paste-ing into a regex playground. See also [[extended-fn-renderings]]."
   {:UUIDv4 #uuid "ee4f7519-12f5-479a-b34a-bdeaa328be13"
    :no-doc true}
   []
@@ -368,14 +371,15 @@
                                          "tap>"
                                          "sorted-set-by"
                                          "compare-and-set!"])]
-    (println (clojure.main/demunge x))))
+    (println x)))
 
 
 #_(standard-fn-renderings)
 
 
 (defn- extended-fn-renderings
-  "Generate function object renderings for  non-clojure built-ins."
+  "Generate function object renderings for  non-clojure built-ins. Useful for
+  copy-pasting into a regex playground. See also [[standard-fn-renderings]]."
   {:UUIDv4 #uuid "dfe0c46c-b1e0-41d7-8cf8-30a2f338970c"
    :no-doc true}
   []
@@ -391,7 +395,7 @@
                                          "foo+bar"
                                          "foo+bar+baz"
                                          "foo-2"])]
-    (println (clojure.main/demunge x))))
+    (println x)))
 
 
 #_(extended-fn-renderings)

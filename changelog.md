@@ -4,6 +4,43 @@
       ReadMoi library changelog
     </h1><a href="https://github.com/blosavio/chlog">changelog info</a>
     <section>
+      <h3 id="v6">
+        version 6
+      </h3>
+      <p>
+        2025 October 15<br>
+        Brad Losavio (blosavio@sagevisuals.com)<br>
+        <em>Description:</em> Fixed function object rendering.<br>
+        <em>Project status:</em> <a href="https://github.com/metosin/open-source/blob/main/project-status.md">active</a><br>
+        <em>Urgency:</em> medium<br>
+        <em>Breaking:</em> no
+      </p>
+      <p></p>
+      <div>
+        <em>altered functions:</em> <code>print-form-then-eval</code>
+      </div>
+      <p></p>
+      <div>
+        <h4>
+          Breaking changes
+        </h4>
+        <ul></ul>
+        <h4>
+          Non-breaking changes
+        </h4>
+        <ul>
+          <li>
+            <div>
+              When run from the command line, previous versions demunged the entire return value before de-rendering the function object, resulting in
+              non-involved underscores to be converted to hyphens and dollar signs to slashes. This bug-fix extracts the function object and demunges that
+              only, correctly perserving underscores and dollar signs in the outer, surrounding string. This bug did not affect invocation from the repl.
+            </div>
+          </li>
+        </ul>
+      </div>
+      <hr>
+    </section>
+    <section>
       <h3 id="v5">
         version 5
       </h3>
@@ -243,7 +280,7 @@
     </section>
     <p id="page-footer">
       Copyright © 2024–2025 Brad Losavio.<br>
-      Compiled by <a href="https://github.com/blosavio/chlog">Chlog</a> on 2025 October 13.<span id="uuid"><br>
+      Compiled by <a href="https://github.com/blosavio/chlog">Chlog</a> on 2025 October 15.<span id="uuid"><br>
       aa13a964-fbe5-4347-92f5-90ba0da27bdb</span>
     </p>
   </body>

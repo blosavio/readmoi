@@ -1,0 +1,25 @@
+{:date {:year 2025
+        :month "October"
+        :day 15}
+ :responsible {:name "Brad Losavio"
+               :email "blosavio@sagevisuals.com"}
+ :version 6
+ :comment "Fixed function object rendering."
+ :project-status :active
+ :stable false
+ :urgency :medium
+ :breaking? false
+ :changes
+ [{:description "When run from the command line, previous versions demunged
+ the entire return value before de-rendering the function object, resulting in
+ non-involved underscores to be converted to hyphens and dollar signs to
+ slashes. This bug-fix extracts the function object and demunges that only,
+ correctly perserving underscores and dollar signs in the outer, surrounding
+ string. This bug did not affect invocation from the repl."
+   :date {:year 2025
+          :month "October"
+          :day 15}
+   :altered-functions ['print-form-then-eval]
+   :change-type :bug-fix
+   :breaking? false}]}
+

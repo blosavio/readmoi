@@ -1,4 +1,4 @@
-(defproject com.sagevisuals/readmoi "5"
+(defproject com.sagevisuals/readmoi "6-SNAPSHOT1"
   :description "A Clojure library for generating a project ReadMe from hiccup/html."
   :url "https://github.com/blosavio/readmoi"
   :license {:name "MIT License"
@@ -23,6 +23,6 @@
           :doc-files []
           :source-uri "https://github.com/blosavio/readmoi/blob/main/{filepath}#L{line}"
           :html {:transforms [[:div.sidebar.primary] [:append [:ul.index-link [:li.depth-1 [:a {:href "https://github.com/blosavio/readmoi"} "Project home"]]]]]}
-          :project {:name "ReadMoi" :version "version 5"}}
+          :project {:name "ReadMoi" :version "version 6"}}
   :scm {:name "git" :url "https://github.com/blosavio/readmoi"})
 

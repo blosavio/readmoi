@@ -265,49 +265,6 @@ Intended to be referenced within hiccup/html section files.")
   ;; see test ns for more samples
   )
 
-
-(def cli-fn-obj-regex #"#object[\s;]*\[[\w\d\-]*.?[\w\d\-]*\/((?:[\w\d\?\+\'\!\<\>\=\*]*-?(?!-)[\w\d\?\+\'\!\<\>\=\*]*)*)-?-?\d{0,4}[^\]]*\]")
-
-
-(comment
-
-  ;; Leiningen's evaluator renders function objects differently than
-  ;; CIDER/nREPL, so must use an alternative regex
-
-  ;; #object                   match literal #object
-  ;; \[                        match literal open bracket
-  ;; [\w\d\-]*                 match zero-or-more words, digits, or hyphens
-  ;; \.?                       match zero-or-one literal periods
-  ;; [\w\d\-]*                 match zero-or-more word, digits, or hyphens
-  ;; \/                        match literal forward slash
-  ;; (                         begin capture group #1
-  ;; (?:                       begin non-capture group #2
-  ;; [\w\d\?\+\'\!\<\>\=\*]*   match zero-or-more word, digits, question marks, <, >, or +, ', *, = symbols
-  ;; -?(?!-)                   match one hyphen only if it is _not_ followed by another hyphen
-  ;; [\w\d\?\+\<\>\'\!\=\*]*   match zero-or-more word, digits, question marks, <, >, or +, ', *, = symbols
-  ;; )*                        end non-capture group #2
-  ;; )                         end capture group #1
-  ;; -?-?                      zero or two hyphens
-  ;; \d{0,4}                   zero to four digits
-  ;; .*                        zero or more anything
-
-  ;; sample function object rendering strings, no newlines
-
-  "#object[clojure.core/pos-int? 0x69f9ab8a \"clojure.core/pos-int?@69f9ab8a\"]"
-  "#object[readmoi.core/prettyfy 0x9fb4031 \"readmoi.core/prettyfy@9fb4031\"]"
-  "#object[an-ns/foo 0x9fb4031 \"an-ns/foo@9fb4031\"]"
-  "#object[nodot/baz 0x9fb4031 \"nodot/baz@9fb4031\"]"
-
-  ;; sample function object rendering strings, trailing `--\d{4}`
-
-  "#object[clojure.core/string?--5494 0x7b02e036 \"clojure.core/string?--5494@7b02e036\"]"
-  "#object[clojure.core/vector?--5498 0x570b21e0 \"clojure.core/vector?--5498@570b21e0\"]"
-  "#object[clojure.core/map?--5496 0x236f3885 \"clojure.core/map?--5496@236f3885\"]"
-
-  ;; see test ns for more samples
-  )
-
-
 (defn revert-fn-obj-rendering-repl
   "Helper to `revert-fn-obj-rendering` for repl-style (i.e., CIDER/nrepl)
   function objects."
@@ -317,13 +274,40 @@ Intended to be referenced within hiccup/html section files.")
   (clojure.string/replace s fn-obj-regex "$1"))
 
 
+(def ^{:no-doc true} cli-fn-obj-regex #"#object[\s;]*\[[\w\d\s]*[\w\d\s\.]*\$([\w\d]*)[\s;]*[^\]]*\]")
+
+
+(comment
+
+  ;; Leiningen's evaluator renders function objects differently than
+  ;; CIDER/nREPL, so must use an alternative regex
+
+  ;; #object       literal #object
+  ;; [\s;]*        zero-or-more whitespace or ;
+  ;; \[            literal [
+  ;; [\w\d\s]*     zero-or-more chars, digits, or whitespace
+  ;; [\w\d\x\.]*   zero-or-more chars, digits, whitespace, or periods
+  ;; \$            literal $
+  ;; (             begin capture group
+  ;; [\w\d]*       zero-or-more chars or digits
+  ;; )             end capture group
+  ;; [\s;]*        zero-or-more whitespace or ;
+  ;; [^\[]*        zero-or-more non-]
+  ;; \]            literal ]
+  )
+
+
 (defn revert-fn-obj-rendering-cli
   "Helper to `revert-fn-obj-rendering` for cli-style (i.e., leiningen), function
   objects."
   {:UUIDv4 #uuid "6f0b8ebb-1aae-432a-aeee-6e0229c4b4ed"
    :no-doc true}
   [s]
-  (clojure.string/replace (clojure.main/demunge s) cli-fn-obj-regex "$1"))
+  (let [f #(->
+            (second %)
+            clojure.main/demunge
+            (str/replace #"--\d*$" ""))]
+    (str/replace s cli-fn-obj-regex f)))
 
 
 (defn revert-fn-obj-rendering
