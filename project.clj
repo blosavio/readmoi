@@ -1,4 +1,4 @@
-(defproject com.sagevisuals/readmoi "6-SNAPSHOT1"
+(defproject com.sagevisuals/readmoi "6"
   :description "A Clojure library for generating a project ReadMe from hiccup/html."
   :url "https://github.com/blosavio/readmoi"
   :license {:name "MIT License"
@@ -10,7 +10,7 @@
                  [zprint "1.2.9"]]
   :repl-options {:init-ns readmoi.core}
   :plugins []
-  :profiles {:dev {:dependencies [[com.sagevisuals/chlog "3"]]
+  :profiles {:dev {:dependencies [[com.sagevisuals/chlog "4"]]
                    :plugins [[dev.weavejester/lein-cljfmt "0.12.0"]
                              [lein-codox "0.10.8"]]}
              :repl {}}
