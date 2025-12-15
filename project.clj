@@ -10,7 +10,7 @@
                  [zprint "1.2.9"]]
   :repl-options {:init-ns readmoi.core}
   :plugins []
-  :profiles {:dev {:dependencies [[com.sagevisuals/chlog "4"]]
+  :profiles {:dev {:dependencies [[com.sagevisuals/chlog "5"]]
                    :plugins [[dev.weavejester/lein-cljfmt "0.12.0"]
                              [lein-codox "0.10.8"]]}
              :repl {}}
